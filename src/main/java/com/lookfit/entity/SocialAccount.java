@@ -11,23 +11,29 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(SocialAccountId.class)
 public class SocialAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "social_id")
     private Integer socialId;
 
-    // 실무에서는 외래키(FK) 매핑을 권장합니다.
+    @Id
+    @Column(name = "memberid", length = 50, nullable = false)
+    private String memberid;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberid", referencedColumnName = "memberid")
+    @JoinColumn(name = "memberid", referencedColumnName = "memberid", insertable = false, updatable = false)
     private Member member;
 
     @Column(nullable = false, length = 20)
-    private String provider; // google
+    private String provider; // google, kakao 등
 
-    @Column(nullable = false, length = 100)
-    private String providerUserId; // 구글/카카오에서 주는 고유 번호
+    @Column(name = "provider_user_id", nullable = false, length = 100)
+    private String providerUserId; // 제공사에서 주는 고유 번호
 
     @Builder.Default
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

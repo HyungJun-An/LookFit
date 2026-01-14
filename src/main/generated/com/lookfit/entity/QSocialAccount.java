@@ -26,6 +26,8 @@ public class QSocialAccount extends EntityPathBase<SocialAccount> {
 
     public final QMember member;
 
+    public final StringPath memberid = createString("memberid");
+
     public final StringPath provider = createString("provider");
 
     public final StringPath providerUserId = createString("providerUserId");
