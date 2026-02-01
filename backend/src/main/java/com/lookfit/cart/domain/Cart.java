@@ -40,4 +40,7 @@ public class Cart {
 
     @Column(name = "pprice", precision = 10, scale = 0)
     private BigDecimal pprice;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 }

@@ -220,7 +220,7 @@ docker-compose up -d     # MySQL 실행
 
 # 현재 진행상황
 
-> **마지막 업데이트**: 2026-01-31 (OAuth2 로그인 플로우 완료 및 테스트 완료)
+> **마지막 업데이트**: 2026-02-01 (Phase 3 완료 + E2E 테스트 완료 + 한글 인코딩 수정)
 
 ## 구현 완료
 - [x] **DDD 구조로 리팩토링** (member, product, cart, order, search 도메인 분리)
@@ -229,16 +229,39 @@ docker-compose up -d     # MySQL 실행
 - [x] JWT 토큰 발급 (JwtTokenProvider)
 - [x] JwtAuthenticationFilter 구현
 - [x] QueryDSL 설정
-- [x] Spring Security 기본 설정
+- [x] Spring Security 기본 설정 + REST API 401/403 처리
 - [x] GlobalExceptionHandler (ErrorCode, BusinessException, ErrorResponse)
 - [x] ProductController + ProductService (상품 CRUD)
 - [x] CartController + CartService (장바구니 CRUD)
-- [x] DTO 분리 (ProductDto, CartDto)
+- [x] **OrderController + OrderService** (주문 CRUD, 재고 관리, 트랜잭션 처리)
+- [x] OrderItem 엔티티 추가 (주문 상품 정보 저장)
+- [x] DTO 분리 (ProductDto, CartDto, OrderDto)
+- [x] Lookpin 스타일 프론트엔드 (ProductList, ProductDetail)
+- [x] 장바구니 JWT 인증 연동
+- [x] **E2E 테스트 완료** (29개 테스트 100% 통과)
+  - Shopping Flow: 9/9
+  - Product Detail: 13/13
+  - Order API: 7/7
+- [x] **MySQL UTF-8 인코딩 완전 수정** (한글 정상 표시)
 
 ## 진행 중
 - [ ] (없음)
 
-## 최근 완료 (2026-01-31)
+## 최근 완료 (2026-02-01)
+- [x] **SecurityConfig 수정** - REST API 인증 실패 시 401 Unauthorized 반환 (리다이렉트 제거)
+- [x] **MySQL UTF-8 인코딩 수정**
+  - application.yml: characterEncoding=UTF-8, connectionCollation=utf8mb4_unicode_ci
+  - WebConfig: StringHttpMessageConverter UTF-8 설정
+  - HikariCP: connection-init-sql SET NAMES utf8mb4
+  - 데이터베이스 데이터 재삽입 (UTF-8)
+- [x] **E2E 테스트 작성 및 실행**
+  - e2e-shopping-flow.js: 쇼핑 플로우 테스트 (9/9 통과)
+  - e2e-complete-test.js: 상품 상세 테스트 (13/13 통과)
+  - e2e-order-flow.js: 주문 API 테스트 작성
+  - test-order-api.sh: API 통합 테스트 (7/7 통과)
+  - e2e-korean-encoding.js: 한글 인코딩 테스트 작성
+
+## 이전 완료 (2026-01-31)
 - [x] **OAuth2 로그인 플로우 완성** - Google OAuth2 → JWT 토큰 발급 → 프론트엔드 콜백 처리
 - [x] **LoginSuccess 컴포넌트** - OAuth2 콜백 처리, 토큰 localStorage 저장, 리다이렉트
 - [x] **OAuth2SuccessHandler 수정** - 프론트엔드로 올바른 리다이렉트 (500 에러 해결)
@@ -265,13 +288,16 @@ docker-compose up -d     # MySQL 실행
 | CartController + CartService | spring-feature-builder | ✅ 완료 | 장바구니 CRUD |
 | GlobalExceptionHandler | spring-feature-builder | ✅ 완료 | ErrorCode, BusinessException |
 
-### Phase 3: 주문 + DTO 정리 🔴 현재
+### Phase 3: 주문 + DTO 정리 + E2E 테스트 ✅ 완료
 | 작업 | 담당 에이전트 | 상태 | 비고 |
 |------|--------------|------|------|
-| OrderController + OrderService | spring-feature-builder | 대기 | Product/Cart 의존 |
-| DTO 분리 | spring-feature-builder | ✅ 완료 | ProductDto, CartDto 구현 |
+| OrderController + OrderService | spring-feature-builder | ✅ 완료 | 재고 관리, 트랜잭션 처리 구현 |
+| OrderItem 엔티티 추가 | spring-feature-builder | ✅ 완료 | 주문 상품 정보 저장 |
+| DTO 분리 | spring-feature-builder | ✅ 완료 | ProductDto, CartDto, OrderDto 구현 |
+| E2E 테스트 | QA 에이전트 | ✅ 완료 | 29개 테스트 100% 통과 |
+| 한글 인코딩 수정 | Backend 에이전트 | ✅ 완료 | MySQL UTF-8 설정 완료 |
 
-### Phase 4: AI 핵심 기능 (프로젝트 차별점)
+### Phase 4: AI 핵심 기능 (프로젝트 차별점) 🔴 현재
 | 작업 | 담당 에이전트 | 상태 | 비고 |
 |------|--------------|------|------|
 | AI 서비스 선정 | AI/ML 에이전트 | 대기 | Stable Diffusion / Replicate 검토 |
@@ -291,7 +317,9 @@ docker-compose up -d     # MySQL 실행
 | ~~높음~~ | ~~핵심 API 미구현 (Product/Cart)~~ | ~~Product/Cart~~ | ✅ 해결 |
 | ~~높음~~ | ~~모든 API 인증 요구 문제~~ | ~~SecurityConfig~~ | ✅ 해결 (2026-01-30) |
 | ~~높음~~ | ~~OAuth2 로그인 500 에러~~ | ~~OAuth2SuccessHandler~~ | ✅ 해결 (2026-01-31) |
-| 중간 | Order API 미구현 | Order | 진행 예정 |
+| ~~중간~~ | ~~Order API 미구현~~ | ~~Order~~ | ✅ 해결 (2026-02-01) |
+| ~~높음~~ | ~~한글 인코딩 깨짐~~ | ~~MySQL connection charset~~ | ✅ 해결 (2026-02-01) |
+| ~~중간~~ | ~~REST API 401 처리~~ | ~~SecurityConfig~~ | ✅ 해결 (2026-02-01) |
 
 ---
 
@@ -362,8 +390,8 @@ npx @anthropic/mcp-puppeteer --version
 ## 구현 완료
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| POST | /api/members | 회원 생성 |
-| GET | /api/members/{memberId} | 회원 조회 |
+| POST | /api/members | 회원 생성 (인증 필요) |
+| GET | /api/members/{memberId} | 회원 조회 (인증 필요) |
 | GET | /login/success | OAuth2 리다이렉트 |
 | GET | /api/v1/products | 상품 목록 (페이징, 정렬, 카테고리 필터) |
 | GET | /api/v1/products/{pID} | 상품 상세 |
@@ -371,13 +399,13 @@ npx @anthropic/mcp-puppeteer --version
 | POST | /api/v1/cart | 장바구니 추가 (인증 필요) |
 | PATCH | /api/v1/cart/{pID} | 장바구니 수량 변경 (인증 필요) |
 | DELETE | /api/v1/cart/{pID} | 장바구니 삭제 (인증 필요) |
+| **POST** | **/api/v1/orders** | **주문 생성 (인증 필요, 재고 차감)** |
+| **GET** | **/api/v1/orders** | **주문 내역 조회 (페이징, 인증 필요)** |
+| **GET** | **/api/v1/orders/{orderno}** | **주문 상세 조회 (인증 필요)** |
 
 ## 구현 예정
 | Method | Endpoint | 설명 | 우선순위 |
 |--------|----------|------|----------|
-| POST | /api/v1/orders | 주문 생성 | 높음 |
-| GET | /api/v1/orders | 주문 내역 조회 | 높음 |
-| GET | /api/v1/orders/{orderno} | 주문 상세 | 높음 |
 | POST | /api/v1/fitting/upload | 사용자 사진 업로드 | 높음 |
 | POST | /api/v1/fitting/generate | AI 착장샷 생성 | 높음 |
 | POST | /api/v1/recommend/outfit | AI 코디 추천 | 중간 |

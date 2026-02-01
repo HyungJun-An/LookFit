@@ -1,4 +1,4 @@
-package com.lookfit.cart.domain;
+package com.lookfit.order.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,24 +11,24 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QCart is a Querydsl query type for Cart
+ * QOrderItem is a Querydsl query type for OrderItem
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QCart extends EntityPathBase<Cart> {
+public class QOrderItem extends EntityPathBase<OrderItem> {
 
-    private static final long serialVersionUID = 609068421L;
+    private static final long serialVersionUID = -1696950336L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QCart cart = new QCart("cart");
+    public static final QOrderItem orderItem = new QOrderItem("orderItem");
 
     public final NumberPath<Integer> amount = createNumber("amount", Integer.class);
 
-    public final StringPath imageUrl = createString("imageUrl");
+    public final QBuy buy;
 
-    public final com.lookfit.member.domain.QMember member;
+    public final NumberPath<Long> itemId = createNumber("itemId", Long.class);
 
-    public final StringPath memberid = createString("memberid");
+    public final NumberPath<Integer> orderno = createNumber("orderno", Integer.class);
 
     public final StringPath pID = createString("pID");
 
@@ -38,25 +38,27 @@ public class QCart extends EntityPathBase<Cart> {
 
     public final com.lookfit.product.domain.QProduct product;
 
-    public QCart(String variable) {
-        this(Cart.class, forVariable(variable), INITS);
+    public final NumberPath<java.math.BigDecimal> subtotal = createNumber("subtotal", java.math.BigDecimal.class);
+
+    public QOrderItem(String variable) {
+        this(OrderItem.class, forVariable(variable), INITS);
     }
 
-    public QCart(Path<? extends Cart> path) {
+    public QOrderItem(Path<? extends OrderItem> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QCart(PathMetadata metadata) {
+    public QOrderItem(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QCart(PathMetadata metadata, PathInits inits) {
-        this(Cart.class, metadata, inits);
+    public QOrderItem(PathMetadata metadata, PathInits inits) {
+        this(OrderItem.class, metadata, inits);
     }
 
-    public QCart(Class<? extends Cart> type, PathMetadata metadata, PathInits inits) {
+    public QOrderItem(Class<? extends OrderItem> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new com.lookfit.member.domain.QMember(forProperty("member")) : null;
+        this.buy = inits.isInitialized("buy") ? new QBuy(forProperty("buy"), inits.get("buy")) : null;
         this.product = inits.isInitialized("product") ? new com.lookfit.product.domain.QProduct(forProperty("product")) : null;
     }
 

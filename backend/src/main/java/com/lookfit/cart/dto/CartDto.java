@@ -37,6 +37,7 @@ public class CartDto {
         private Integer amount;
         private BigDecimal pprice;
         private BigDecimal subtotal;
+        private String imageUrl;
 
         public static ItemResponse from(Cart cart) {
             BigDecimal subtotal = cart.getPprice().multiply(BigDecimal.valueOf(cart.getAmount()));
@@ -46,6 +47,7 @@ public class CartDto {
                     .amount(cart.getAmount())
                     .pprice(cart.getPprice())
                     .subtotal(subtotal)
+                    .imageUrl(cart.getImageUrl())
                     .build();
         }
     }

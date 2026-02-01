@@ -3,10 +3,12 @@ spring:
     include:
       - oauth
   datasource:
-    url: jdbc:mysql://localhost:3306/lookfit_db?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/lookfit_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&useUnicode=true&connectionCollation=utf8mb4_unicode_ci
     username: root
     password: 651212
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,6 +16,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          time_zone: UTC
   sql:
     init:
       mode: always

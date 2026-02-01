@@ -53,6 +53,9 @@ public class CartService {
             throw new BusinessException(ErrorCode.PRODUCT_OUT_OF_STOCK);
         }
 
+        // Get product image URL (placeholder for now)
+        String imageUrl = "https://via.placeholder.com/400x533?text=" + product.getPname();
+
         Cart cart = cartRepository.findByMemberidAndProductId(memberId, request.getPID())
                 .map(existingCart -> {
                     existingCart.setAmount(existingCart.getAmount() + request.getAmount());
@@ -64,6 +67,7 @@ public class CartService {
                         .pname(product.getPname())
                         .pprice(product.getPprice())
                         .amount(request.getAmount())
+                        .imageUrl(imageUrl)
                         .build());
 
         Cart savedCart = cartRepository.save(cart);
