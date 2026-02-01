@@ -10,14 +10,16 @@ const LoginSuccess = () => {
   useEffect(() => {
     const token = searchParams.get('token');
     const memberId = searchParams.get('memberId');
+    const memberName = searchParams.get('memberName');
 
     if (token && memberId) {
-      // Store token in localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('memberId', memberId);
+      // Store memberName in localStorage
+      if (memberName) {
+        localStorage.setItem('memberName', memberName);
+      }
 
-      // Update AuthContext
-      login(memberId);
+      // Update AuthContext (which also stores in localStorage)
+      login(memberId, token);
 
       // Redirect to home page
       setTimeout(() => {

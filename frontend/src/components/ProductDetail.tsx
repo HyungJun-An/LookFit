@@ -60,6 +60,14 @@ const ProductDetail = () => {
       // Get token from localStorage
       const token = localStorage.getItem('token');
 
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      console.log('Adding to cart:', { pID: product.pid, amount: quantity });
+
       await axios.post(
         'http://localhost:8080/api/v1/cart',
         {
@@ -68,6 +76,7 @@ const ProductDetail = () => {
         },
         {
           headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           }
         }

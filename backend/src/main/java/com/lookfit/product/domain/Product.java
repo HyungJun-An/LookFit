@@ -34,4 +34,7 @@ public class Product {
 
     @Column(name = "pstock")
     private Integer pstock;
+
+    @Column(name = "imageurl", length = 500)
+    private String imageUrl;
 }

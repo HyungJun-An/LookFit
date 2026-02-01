@@ -21,7 +21,7 @@ public class Cart {
     private String pID;
 
     @Id
-    @Column(name = "memberid", length = 15, nullable = false)
+    @Column(name = "memberid", length = 100, nullable = false)
     private String memberid;
 
     @ManyToOne(fetch = FetchType.LAZY)

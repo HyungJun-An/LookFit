@@ -21,6 +21,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath description = createString("description");
 
+    public final StringPath imageUrl = createString("imageUrl");
+
     public final StringPath pcategory = createString("pcategory");
 
     public final StringPath pcompany = createString("pcompany");

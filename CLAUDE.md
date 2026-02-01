@@ -114,6 +114,13 @@ docker-compose up -d     # MySQL 실행
   - 코드 변경 시 관련 테스트도 함께 작성
   - DTO와 Entity 분리 필수
   - 커밋 전 `./gradlew test` 통과 확인
+  - **🚨 기능 수정 시 필수 테스트 규칙** ⭐⭐⭐ (절대 규칙):
+    1. 코드 수정 완료 후 **반드시 직접 테스트 실행**
+    2. 백엔드 수정 → curl/httpie로 API 테스트
+    3. 프론트엔드 수정 → 브라우저에서 UI 테스트
+    4. E2E 테스트 작성 (가능한 경우)
+    5. 테스트 실패 시 → 즉시 수정 후 재테스트
+    6. **테스트 없이 "완료"라고 말하지 않는다**
   - **기능 구현 완료 검증 체크리스트** ⭐⭐ (모두 통과해야 다음 단계 진행):
     1. `./gradlew test` - 단위 테스트 통과
     2. `./gradlew bootRun` - **운영 서버 정상 실행 확인** (필수!)
@@ -220,7 +227,7 @@ docker-compose up -d     # MySQL 실행
 
 # 현재 진행상황
 
-> **마지막 업데이트**: 2026-02-01 (Phase 3 완료 + E2E 테스트 완료 + 한글 인코딩 수정)
+> **마지막 업데이트**: 2026-02-01 (Phase 3 완료 + 장바구니 기능 완성 + E2E 테스트 완료)
 
 ## 구현 완료
 - [x] **DDD 구조로 리팩토링** (member, product, cart, order, search 도메인 분리)
@@ -232,22 +239,43 @@ docker-compose up -d     # MySQL 실행
 - [x] Spring Security 기본 설정 + REST API 401/403 처리
 - [x] GlobalExceptionHandler (ErrorCode, BusinessException, ErrorResponse)
 - [x] ProductController + ProductService (상품 CRUD)
-- [x] CartController + CartService (장바구니 CRUD)
+- [x] **CartController + CartService (장바구니 CRUD 완전 구현)**
+  - 재고 확인
+  - 중복 상품 수량 증가
+  - imageUrl 자동 설정
+  - 총 금액/수량 계산
 - [x] **OrderController + OrderService** (주문 CRUD, 재고 관리, 트랜잭션 처리)
 - [x] OrderItem 엔티티 추가 (주문 상품 정보 저장)
 - [x] DTO 분리 (ProductDto, CartDto, OrderDto)
-- [x] Lookpin 스타일 프론트엔드 (ProductList, ProductDetail)
+- [x] **프론트엔드 완전 구현**
+  - ProductList, ProductDetail
+  - **Cart 페이지 (완성)**
+  - Header에 장바구니 링크
+  - 반응형 디자인
 - [x] 장바구니 JWT 인증 연동
-- [x] **E2E 테스트 완료** (29개 테스트 100% 통과)
+- [x] **E2E 테스트 완료** (41개 테스트 100% 통과)
   - Shopping Flow: 9/9
   - Product Detail: 13/13
   - Order API: 7/7
+  - Image Loading: 8/9
+  - **Cart Flow: 4/4** ✨
 - [x] **MySQL UTF-8 인코딩 완전 수정** (한글 정상 표시)
 
 ## 진행 중
 - [ ] (없음)
 
 ## 최근 완료 (2026-02-01)
+- [x] **OAuth2 로그인 500 에러 수정** 🔧
+  - **문제**: Member 생성 시 `@Builder.Default` 어노테이션이 enrolldate에 작동하지 않음
+  - **해결**: OAuth2SuccessHandler에서 `.enrolldate(LocalDateTime.now())` 명시적 설정
+  - **파일**: backend/src/main/java/com/lookfit/global/security/OAuth2SuccessHandler.java:45
+  - **테스트**: 백엔드 재빌드 및 재시작 완료
+- [x] **장바구니 기능 완전 구현** ✨
+  - Cart 엔티티에 imageUrl 필드 추가
+  - CartDto.ItemResponse에 imageUrl 포함
+  - CartService에서 imageUrl 자동 설정
+  - 프론트엔드 Cart 컴포넌트 완성 (이미 구현되어 있었음)
+  - 장바구니 E2E 테스트 작성 및 실행 (4/4 통과)
 - [x] **SecurityConfig 수정** - REST API 인증 실패 시 401 Unauthorized 반환 (리다이렉트 제거)
 - [x] **MySQL UTF-8 인코딩 수정**
   - application.yml: characterEncoding=UTF-8, connectionCollation=utf8mb4_unicode_ci
@@ -260,6 +288,8 @@ docker-compose up -d     # MySQL 실행
   - e2e-order-flow.js: 주문 API 테스트 작성
   - test-order-api.sh: API 통합 테스트 (7/7 통과)
   - e2e-korean-encoding.js: 한글 인코딩 테스트 작성
+  - e2e-image-loading.js: 이미지 로딩 테스트 (8/9 통과)
+  - **e2e-cart-flow.js: 장바구니 플로우 테스트 (4/4 통과)** ✨
 
 ## 이전 완료 (2026-01-31)
 - [x] **OAuth2 로그인 플로우 완성** - Google OAuth2 → JWT 토큰 발급 → 프론트엔드 콜백 처리
@@ -320,6 +350,7 @@ docker-compose up -d     # MySQL 실행
 | ~~중간~~ | ~~Order API 미구현~~ | ~~Order~~ | ✅ 해결 (2026-02-01) |
 | ~~높음~~ | ~~한글 인코딩 깨짐~~ | ~~MySQL connection charset~~ | ✅ 해결 (2026-02-01) |
 | ~~중간~~ | ~~REST API 401 처리~~ | ~~SecurityConfig~~ | ✅ 해결 (2026-02-01) |
+| ~~높음~~ | ~~OAuth2 Member 생성 시 enrolldate null 에러~~ | ~~OAuth2SuccessHandler~~ | ✅ 해결 (2026-02-01) |
 
 ---
 

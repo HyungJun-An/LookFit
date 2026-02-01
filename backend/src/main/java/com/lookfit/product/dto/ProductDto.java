@@ -18,6 +18,7 @@ public class ProductDto {
         private String description;
         private String pcompany;
         private Integer pstock;
+        private String imageUrl;
 
         public static Response from(Product product) {
             return Response.builder()
@@ -28,6 +29,7 @@ public class ProductDto {
                     .description(product.getDescription())
                     .pcompany(product.getPcompany())
                     .pstock(product.getPstock())
+                    .imageUrl(product.getImageUrl())
                     .build();
         }
     }

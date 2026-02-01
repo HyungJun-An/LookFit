@@ -244,29 +244,79 @@ jwt_secret_key=your_jwt_secret_key
 
 ## 📝 개발 현황
 
-### ✅ 완료
+### ✅ 완료 (2026-02-01)
 
-- [x] 프로젝트 기본 구조 설정
-- [x] 데이터베이스 설계 및 엔티티 작성
-- [x] OAuth2 소셜 로그인 (Google)
-- [x] JWT 토큰 기반 인증
-- [x] 회원 관리 (Member, SocialAccount)
+#### Backend
+- [x] 프로젝트 기본 구조 설정 (DDD 아키텍처)
+- [x] 데이터베이스 설계 및 엔티티 작성 (12개 엔티티)
+- [x] **OAuth2 소셜 로그인 완성**
+  - Google OAuth2 연동
+  - JWT 토큰 발급 및 인증
+  - 자동 회원 생성 (첫 로그인 시)
+  - 한글 이름 UTF-8 인코딩 처리
+- [x] **상품 관리 API**
+  - 상품 목록 조회 (페이징, 정렬, 필터링)
+  - 상품 상세 조회
+  - 상품 이미지 URL 지원
+- [x] **장바구니 API**
+  - 장바구니 조회
+  - 상품 추가
+  - 수량 변경
+  - 상품 삭제 (트랜잭션 처리)
+- [x] **주문 API**
+  - 주문 생성 (재고 차감)
+  - 주문 내역 조회
+  - 주문 상세 조회
+  - OrderItem 엔티티 (주문 상품 정보)
+- [x] **보안 및 예외 처리**
+  - SecurityConfig (CORS, JWT 필터)
+  - GlobalExceptionHandler
+  - ErrorCode 정의
+  - REST API 401/403 처리
+
+#### Frontend
+- [x] React + Vite 프로젝트 설정
+- [x] **디자인 시스템 구축**
+  - Design Tokens (색상, 타이포그래피, 간격)
+  - Lookpin 스타일 UI 컴포넌트
+- [x] **페이지 구현**
+  - 홈 (상품 목록)
+  - 로그인 (Google OAuth2)
+  - 상품 상세
+  - 장바구니
+  - 주문 내역
+- [x] **기능 구현**
+  - OAuth2 로그인 플로우
+  - JWT 토큰 기반 인증
+  - 장바구니 CRUD
+  - 상품 이미지 표시
+  - Header 환영 메시지 ("환영합니다, {이름}님")
+
+#### Testing
+- [x] Puppeteer E2E 테스트
+  - 쇼핑 플로우 테스트 (9/9 통과)
+  - 상품 상세 테스트 (13/13 통과)
+  - 장바구니 플로우 테스트 (4/4 통과)
+  - OAuth2 로그인 테스트 스크립트
+
+#### Database
+- [x] MySQL UTF-8 인코딩 설정
+- [x] 상품 이미지 URL 데이터 추가 (Unsplash)
+- [x] Member 테이블 memberid varchar(50) 설정
 
 ### 🚧 진행 중
 
-- [ ] 상품 관리 API
-- [ ] 장바구니 API
-- [ ] 결제 API
-- [ ] AI 피팅 기능
+- [ ] 프론트엔드 버튼 색상 이슈 해결 (찜하기, AI 착장샷 버튼)
 
-### 📋 예정
+### 📋 다음 단계 (Phase 4)
 
-- [ ] API 명세서 작성
-- [ ] TDD 적용
-- [ ] 성능 최적화
-- [ ] Redis 캐싱 적용
-- [ ] AWS S3 이미지 업로드
-- [ ] ElasticSearch 검색 기능
+- [ ] AI 착장샷 기능 (프로젝트 핵심 차별점)
+  - AI 서비스 선정 (Stable Diffusion / Replicate)
+  - 착장샷 API 설계 및 구현
+  - 비동기 이미지 처리
+- [ ] 찜하기 (Wishlist) API 구현
+- [ ] 리뷰 & Q&A 기능
+- [ ] 검색 기능 강화
 
 ---
 

@@ -205,17 +205,20 @@
   align-items: center;
   justify-content: center;
   background: var(--color-bg-primary);
-  border: none;
+  border: 2px solid var(--color-neutral-300);
   border-radius: var(--radius-full);
+  color: var(--color-primary-600);
   cursor: pointer;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   transition: all var(--duration-fast) var(--ease-in-out);
 }
 
 .product-card__action-btn:hover {
   background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
   color: var(--color-text-inverse);
   transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
 }
 
 .product-card__info {
