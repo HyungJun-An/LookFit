@@ -34,6 +34,7 @@ public class CartDto {
     @Getter
     @Builder
     public static class ItemResponse {
+        @JsonProperty("pID")
         private String pID;
         private String pname;
         private Integer amount;

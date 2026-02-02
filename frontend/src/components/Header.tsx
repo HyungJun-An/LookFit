@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import SearchBar from './SearchBar';
 import '../styles/Header.css';
 
 const Header = () => {
@@ -12,6 +13,10 @@ const Header = () => {
         <Link to="/" className="header__logo">
           <h1>LookFit</h1>
         </Link>
+
+        <div className="header__search">
+          <SearchBar />
+        </div>
 
         <nav className="header__nav">
           <Link to="/" className="header__nav-link">홈</Link>

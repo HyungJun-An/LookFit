@@ -6,6 +6,7 @@ import Cart from './components/Cart';
 import Login from './components/Login';
 import LoginSuccess from './components/LoginSuccess';
 import VirtualFitting from './components/VirtualFitting';
+import SearchResults from './pages/SearchResults';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/products/:pID" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/fitting" element={<VirtualFitting />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/success" element={<LoginSuccess />} />
         </Routes>

@@ -8,12 +8,14 @@ import com.lookfit.product.repository.ProductRepository;
 import com.lookfit.global.exception.BusinessException;
 import com.lookfit.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -93,9 +95,20 @@ public class CartService {
 
     @Transactional
     public void removeFromCart(String memberId, String pID) {
+        log.debug("Attempting to remove from cart - memberId: {}, pID: {}", memberId, pID);
+
+        // Check all cart items for this member
+        List<Cart> allCartItems = cartRepository.findByMemberid(memberId);
+        log.debug("Found {} cart items for member", allCartItems.size());
+        allCartItems.forEach(item ->
+            log.debug("Cart item - pID: '{}', memberid: '{}'", item.getPID(), item.getMemberid())
+        );
+
         if (!cartRepository.findByMemberidAndProductId(memberId, pID).isPresent()) {
+            log.error("Cart item not found - memberId: '{}', pID: '{}'", memberId, pID);
             throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
         cartRepository.deleteByMemberidAndProductId(memberId, pID);
+        log.debug("Successfully deleted cart item - memberId: {}, pID: {}", memberId, pID);
     }
 }

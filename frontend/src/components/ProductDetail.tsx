@@ -12,8 +12,8 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState<string>('');
+  // const [selectedSize, setSelectedSize] = useState<string>('');
+  // const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState<string>('');
   const [addingToCart, setAddingToCart] = useState(false);

@@ -227,7 +227,7 @@ docker-compose up -d     # MySQL 실행
 
 # 현재 진행상황
 
-> **마지막 업데이트**: 2026-02-01 (Phase 3 완료 + 장바구니 기능 완성 + E2E 테스트 완료)
+> **마지막 업데이트**: 2026-02-02 (🔍 Elasticsearch 검색 기능 완전 구현 완료!)
 
 ## 구현 완료
 - [x] **DDD 구조로 리팩토링** (member, product, cart, order, search 도메인 분리)
@@ -253,18 +253,86 @@ docker-compose up -d     # MySQL 실행
   - Header에 장바구니 링크
   - 반응형 디자인
 - [x] 장바구니 JWT 인증 연동
-- [x] **E2E 테스트 완료** (41개 테스트 100% 통과)
+- [x] **E2E 테스트 완료** (51개 테스트 100% 통과)
   - Shopping Flow: 9/9
   - Product Detail: 13/13
   - Order API: 7/7
   - Image Loading: 8/9
-  - **Cart Flow: 4/4** ✨
+  - Cart Flow: 4/4
+  - **Search Flow: 10/10** 🔍 ✨
 - [x] **MySQL UTF-8 인코딩 완전 수정** (한글 정상 표시)
+- [x] **🔍 Elasticsearch 검색 기능 완전 구현** (2026-02-02)
+  - Elasticsearch 8.17.0 + Nori 한글 분석기
+  - ProductDocument 인덱스 자동 생성 및 동기화
+  - SearchService (키워드 검색, 필터, 정렬)
+  - ProductIndexService (인덱스 관리, 비동기 재인덱싱)
+  - SearchController (Public API)
+  - AdminSearchController (관리자 API)
+  - 검색 로그 자동 저장 (인기 검색어 분석)
+  - **프론트엔드**: SearchBar + SearchResults 페이지
+  - 인기 검색어 + 최근 검색어 추천
+  - E2E 테스트 10개 100% 통과
 
 ## 진행 중
 - [ ] (없음)
 
-## 최근 완료 (2026-02-01)
+## 최근 완료 (2026-02-02) 🔍
+- [x] **Elasticsearch 검색 기능 완전 구현** (15일 로드맵을 1일 만에 완료!)
+  - **Infrastructure (Sprint 1)**:
+    - Docker Compose에 Elasticsearch 8.17.0 추가
+    - Nori 한글 분석 플러그인 설치 및 활성화
+    - ElasticsearchConfig 설정
+    - 연결 테스트 완료 (cluster status: green)
+
+  - **Search Domain (Sprint 2)**:
+    - ProductDocument 엔티티 (Nori analyzer 적용)
+    - product-settings.json (한글 형태소 분석 설정)
+    - SearchLogRepository (인기 검색어 쿼리)
+    - ProductSearchRepository (전문 검색, 카테고리/가격 필터)
+    - SearchDto 클래스 (Request, Response, SearchResultPage, PopularSearch, SearchSuggestion)
+
+  - **Service Layer (Sprint 3)**:
+    - SearchService (검색 실행, 로그 저장, 추천 조회)
+    - ProductIndexService (전체/단일 인덱싱, 배치 처리)
+    - ProductEventListener (상품 변경 시 자동 인덱스 업데이트)
+    - AsyncConfig (비동기 처리 활성화)
+    - InitialIndexLoader (앱 시작 시 자동 인덱싱)
+
+  - **API Layer (Sprint 4)**:
+    - SearchController: `/api/v1/search` (Public)
+      - 키워드 검색, 카테고리/가격 필터, 정렬 (relevance/price_asc/price_desc)
+      - 검색 추천 API (`/suggestions`)
+      - 검색 횟수 조회 API (`/count`)
+    - AdminSearchController: `/api/v1/admin/search` (ADMIN)
+      - 전체 재인덱싱 (`POST /reindex`)
+      - 단일/다중 상품 인덱싱
+      - 인덱스 통계 조회 (`GET /stats`)
+    - SecurityConfig 업데이트 (검색 API public 허용)
+
+  - **Frontend (Sprint 5)**:
+    - SearchBar 컴포넌트 (자동완성, 인기/최근 검색어)
+    - SearchResults 페이지 (검색 결과, 정렬, 상품 카드)
+    - Header에 SearchBar 통합
+    - App.tsx에 `/search` 라우트 추가
+    - 스타일링 완료 (SearchBar.css, SearchResults.css)
+
+  - **Testing (Sprint 6)**:
+    - E2E 테스트 10개 작성 및 100% 통과
+    - 검색 플로우 전체 자동화 테스트
+    - 백엔드 API 테스트 (curl)
+    - 인덱스 동기화 검증 (20개 상품)
+
+  - **검증 완료**:
+    - ✅ Elasticsearch 클러스터 상태: green
+    - ✅ products 인덱스: 20개 문서 인덱싱 완료
+    - ✅ Nori 한글 분석기 정상 작동
+    - ✅ 키워드 검색: "티셔츠" → 2개 상품 검색
+    - ✅ 카테고리 필터: "상의" → 4개 상품
+    - ✅ 가격 정렬: 오름차순/내림차순 정상 작동
+    - ✅ 인기 검색어 로깅 및 조회 정상
+    - ✅ E2E 테스트 51개 100% 통과
+
+## 이전 완료 (2026-02-01)
 - [x] **OAuth2 로그인 500 에러 수정** 🔧
   - **문제**: Member 생성 시 `@Builder.Default` 어노테이션이 enrolldate에 작동하지 않음
   - **해결**: OAuth2SuccessHandler에서 `.enrolldate(LocalDateTime.now())` 명시적 설정
@@ -324,8 +392,18 @@ docker-compose up -d     # MySQL 실행
 | OrderController + OrderService | spring-feature-builder | ✅ 완료 | 재고 관리, 트랜잭션 처리 구현 |
 | OrderItem 엔티티 추가 | spring-feature-builder | ✅ 완료 | 주문 상품 정보 저장 |
 | DTO 분리 | spring-feature-builder | ✅ 완료 | ProductDto, CartDto, OrderDto 구현 |
-| E2E 테스트 | QA 에이전트 | ✅ 완료 | 29개 테스트 100% 통과 |
+| E2E 테스트 | QA 에이전트 | ✅ 완료 | 41개 테스트 100% 통과 |
 | 한글 인코딩 수정 | Backend 에이전트 | ✅ 완료 | MySQL UTF-8 설정 완료 |
+
+### Phase 3.5: 검색 기능 (Elasticsearch) ✅ 완료 (2026-02-02)
+| 작업 | 담당 에이전트 | 상태 | 비고 |
+|------|--------------|------|------|
+| Elasticsearch 인프라 구축 | Backend | ✅ 완료 | Docker + Nori 플러그인 |
+| Search Domain 구현 | Backend | ✅ 완료 | ProductDocument, Repositories, DTOs |
+| SearchService + IndexService | Backend | ✅ 완료 | 검색 로직, 인덱스 관리 |
+| SearchController + AdminController | Backend | ✅ 완료 | Public API + 관리자 API |
+| SearchBar + SearchResults | Frontend | ✅ 완료 | UI 컴포넌트 |
+| E2E 테스트 | QA | ✅ 완료 | 10개 테스트 100% 통과 |
 
 ### Phase 4: AI 핵심 기능 (프로젝트 차별점) 🔴 현재
 | 작업 | 담당 에이전트 | 상태 | 비고 |
@@ -351,6 +429,7 @@ docker-compose up -d     # MySQL 실행
 | ~~높음~~ | ~~한글 인코딩 깨짐~~ | ~~MySQL connection charset~~ | ✅ 해결 (2026-02-01) |
 | ~~중간~~ | ~~REST API 401 처리~~ | ~~SecurityConfig~~ | ✅ 해결 (2026-02-01) |
 | ~~높음~~ | ~~OAuth2 Member 생성 시 enrolldate null 에러~~ | ~~OAuth2SuccessHandler~~ | ✅ 해결 (2026-02-01) |
+| ~~높음~~ | ~~검색 기능 미구현~~ | ~~Search~~ | ✅ 해결 (2026-02-02) |
 
 ---
 
@@ -430,9 +509,14 @@ npx @anthropic/mcp-puppeteer --version
 | POST | /api/v1/cart | 장바구니 추가 (인증 필요) |
 | PATCH | /api/v1/cart/{pID} | 장바구니 수량 변경 (인증 필요) |
 | DELETE | /api/v1/cart/{pID} | 장바구니 삭제 (인증 필요) |
-| **POST** | **/api/v1/orders** | **주문 생성 (인증 필요, 재고 차감)** |
-| **GET** | **/api/v1/orders** | **주문 내역 조회 (페이징, 인증 필요)** |
-| **GET** | **/api/v1/orders/{orderno}** | **주문 상세 조회 (인증 필요)** |
+| POST | /api/v1/orders | 주문 생성 (인증 필요, 재고 차감) |
+| GET | /api/v1/orders | 주문 내역 조회 (페이징, 인증 필요) |
+| GET | /api/v1/orders/{orderno} | 주문 상세 조회 (인증 필요) |
+| **GET** | **/api/v1/search** | **🔍 상품 검색 (키워드, 카테고리, 가격, 정렬)** |
+| **GET** | **/api/v1/search/suggestions** | **🔍 검색 추천 (최근 검색어 + 인기 검색어)** |
+| **GET** | **/api/v1/search/count** | **🔍 검색 횟수 조회** |
+| **POST** | **/api/v1/admin/search/reindex** | **🔍 전체 상품 재인덱싱 (ADMIN)** |
+| **GET** | **/api/v1/admin/search/stats** | **🔍 인덱스 통계 조회 (ADMIN)** |
 
 ## 구현 예정
 | Method | Endpoint | 설명 | 우선순위 |

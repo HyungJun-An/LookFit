@@ -2,21 +2,13 @@
 
 ## 🔴 긴급 (High Priority)
 
-### UI 버튼 색상 이슈
-- **문제**: 상품 카드의 찜하기/AI 착장샷 버튼이 회색으로만 표시됨
-- **위치**: ProductList 페이지 > 상품 카드
-- **파일**: `frontend/src/styles/ProductList.css` - `.product-card__action-btn`
-- **현재 상태**:
-  - 버튼은 DOM에 존재하고 hover 효과는 작동
-  - 기본 색상이 회색으로 보임
-- **시도한 해결책**:
-  - `color: var(--color-primary-600)` 추가
-  - `border: 2px solid var(--color-neutral-300)` 추가
-  - 브라우저 캐시 삭제 안내
-- **다음 시도**:
-  - SVG stroke 색상 직접 지정
-  - !important 플래그 추가
-  - 개발자 도구로 실제 적용된 CSS 확인
+### ~~UI 버튼 색상 이슈~~ ✅ 해결 (2026-02-02)
+- **문제**: SVG 아이콘이 `0x20` (공백 문자)으로 렌더링되는 버그
+- **원인**: React/Vite 환경에서 인라인 SVG가 공백 문자로 치환되는 렌더링 이슈
+- **해결**: 유니코드 문자(♥, 👁)로 대체하여 정상 표시
+- **파일**:
+  - `frontend/src/components/ProductList.tsx`
+  - `frontend/src/styles/ProductList.css`
 
 ## 🟡 중요 (Medium Priority)
 
@@ -60,6 +52,11 @@
 - [ ] 주문 취소/환불 기능
 
 ## ✅ 완료
+
+### 2026-02-02
+- [x] 장바구니 삭제 기능 수정 (Hibernate 네이밍 전략)
+- [x] CartDto.ItemResponse에 @JsonProperty("pID") 추가
+- [x] UI 버튼 아이콘 문제 해결 (유니코드 문자 사용)
 
 ### 2026-02-01
 - [x] OAuth2 로그인 500 에러 수정 (enrolldate, 한글 인코딩)

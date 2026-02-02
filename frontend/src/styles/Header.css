@@ -24,6 +24,11 @@
   margin: 0;
 }
 
+.header__search {
+  flex: 1;
+  max-width: 500px;
+}
+
 .header__nav {
   display: flex;
   align-items: center;

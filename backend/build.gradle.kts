@@ -56,7 +56,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:$jjwtVersion")
 
     // 8. Search (ElasticSearch - 인기 검색어 및 로그 분석용)
-//    implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+    implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
 
     // 9. Monitoring (부하 테스트 지표 측정용)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
