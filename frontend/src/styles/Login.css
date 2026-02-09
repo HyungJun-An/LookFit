@@ -54,6 +54,64 @@
   margin: 0 0 var(--space-8) 0;
 }
 
+/* Email Login Form */
+.email-login-form {
+  margin-bottom: var(--space-6);
+}
+
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-group label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.form-group input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.signup-link a {
+  color: var(--color-primary-600);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
 .google-login-btn {
   display: flex;
   align-items: center;
@@ -137,12 +195,24 @@
 
 /* Mobile Responsive */
 @media (max-width: 640px) {
+  .login-container {
+    padding: var(--space-3);
+  }
+
+  .login-card {
+    max-width: 100%;
+  }
+
   .login-header {
     padding: var(--space-6) var(--space-4);
   }
 
   .login-header h1 {
-    font-size: var(--text-3xl);
+    font-size: var(--text-2xl);
+  }
+
+  .login-subtitle {
+    font-size: var(--text-sm);
   }
 
   .login-body {
@@ -151,5 +221,25 @@
 
   .login-body h2 {
     font-size: var(--text-xl);
+  }
+
+  .google-login-btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .google-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-header h1 {
+    font-size: var(--text-xl);
+  }
+
+  .login-body h2 {
+    font-size: var(--text-lg);
   }
 }

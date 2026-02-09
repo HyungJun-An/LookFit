@@ -141,3 +141,56 @@
 .search-suggestions::-webkit-scrollbar-thumb:hover {
   background: #d4d4d4;
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .search-bar {
+    max-width: 100%;
+  }
+
+  .search-bar__form {
+    padding: 6px 12px;
+  }
+
+  .search-bar__input {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .search-bar__button {
+    font-size: 18px;
+    padding: 4px 6px;
+  }
+
+  .search-suggestions {
+    max-height: 300px;
+  }
+
+  .search-suggestions__section {
+    padding: 12px;
+  }
+
+  .search-suggestions__title {
+    font-size: 12px;
+  }
+
+  .search-suggestions__item {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar__form {
+    border-radius: 20px;
+  }
+
+  .search-bar__input {
+    font-size: 14px;
+  }
+
+  .search-suggestions__rank {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+}

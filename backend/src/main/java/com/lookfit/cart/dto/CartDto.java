@@ -17,8 +17,8 @@ public class CartDto {
     @Setter
     public static class AddRequest {
         @NotBlank(message = "상품 ID는 필수입니다")
-        @JsonProperty("pID")
-        private String pID;
+        @JsonProperty("productId")
+        private String productId;
 
         @Min(value = 1, message = "수량은 1 이상이어야 합니다")
         private Integer amount = 1;
@@ -34,21 +34,31 @@ public class CartDto {
     @Getter
     @Builder
     public static class ItemResponse {
-        @JsonProperty("pID")
-        private String pID;
-        private String pname;
+        @JsonProperty("productId")
+        private String productId;
+
+        @JsonProperty("productName")
+        private String productName;
+
+        @JsonProperty("amount")
         private Integer amount;
-        private BigDecimal pprice;
+
+        @JsonProperty("productPrice")
+        private BigDecimal productPrice;
+
+        @JsonProperty("subtotal")
         private BigDecimal subtotal;
+
+        @JsonProperty("imageUrl")
         private String imageUrl;
 
         public static ItemResponse from(Cart cart) {
-            BigDecimal subtotal = cart.getPprice().multiply(BigDecimal.valueOf(cart.getAmount()));
+            BigDecimal subtotal = cart.getProductPrice().multiply(BigDecimal.valueOf(cart.getAmount()));
             return ItemResponse.builder()
-                    .pID(cart.getPID())
-                    .pname(cart.getPname())
+                    .productId(cart.getProductId())
+                    .productName(cart.getProductName())
                     .amount(cart.getAmount())
-                    .pprice(cart.getPprice())
+                    .productPrice(cart.getProductPrice())
                     .subtotal(subtotal)
                     .imageUrl(cart.getImageUrl())
                     .build();

@@ -55,6 +55,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             // 6. SocialAccount 테이블 저장 (Member와 연관관계 맺기)
             SocialAccount socialAccount = SocialAccount.builder()
+                    .memberid(memberId)  // FK 값 명시적 설정 (필수!)
                     .member(member) // 위에서 저장한 member 객체 주입
                     .provider(provider)
                     .providerUserId(providerUserId)

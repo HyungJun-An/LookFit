@@ -1,10 +1,16 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import '../styles/Login.css';
 
 const Login = () => {
   const { memberId } = useAuth();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // 이미 로그인되어 있으면 홈으로 리다이렉트
   if (memberId) {
@@ -17,6 +23,38 @@ const Login = () => {
     window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+        email,
+        password,
+      });
+
+      // 토큰 저장
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('memberId', response.data.memberId);
+      localStorage.setItem('memberName', response.data.memberName);
+
+      // 홈으로 이동
+      window.location.href = '/';
+    } catch (err: any) {
+      console.error('Login failed:', err);
+      if (err.response?.status === 401) {
+        setError('이메일 또는 비밀번호가 일치하지 않습니다.');
+      } else if (err.response?.status === 403) {
+        setError('탈퇴한 회원입니다.');
+      } else {
+        setError('로그인에 실패했습니다. 다시 시도해주세요.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
@@ -27,10 +65,58 @@ const Login = () => {
 
         <div className="login-body">
           <h2>로그인</h2>
-          <p className="login-description">
-            Google 계정으로 간편하게 로그인하세요
-          </p>
 
+          {/* 이메일 로그인 폼 */}
+          <form className="email-login-form" onSubmit={handleEmailLogin}>
+            {error && <div className="error-message">{error}</div>}
+
+            <div className="form-group">
+              <label htmlFor="email">이메일</label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일을 입력하세요"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">비밀번호</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
+              {loading ? '로그인 중...' : '로그인'}
+            </button>
+          </form>
+
+          <div className="signup-link">
+            <p>
+              아직 회원이 아니신가요?{' '}
+              <a href="/signup" onClick={(e) => { e.preventDefault(); navigate('/signup'); }}>
+                회원가입
+              </a>
+            </p>
+          </div>
+
+          <div className="login-divider">
+            <span>또는</span>
+          </div>
+
+          {/* Google 로그인 */}
           <button
             className="google-login-btn"
             onClick={handleGoogleLogin}
@@ -43,10 +129,6 @@ const Login = () => {
             </svg>
             Google로 계속하기
           </button>
-
-          <div className="login-divider">
-            <span>또는</span>
-          </div>
 
           <div className="guest-mode">
             <p className="guest-text">로그인 없이 둘러보기</p>

@@ -10,6 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CartId implements Serializable {
-    private String pID;
-    private String memberid;
+    private String productId;
+    private String memberId;
 }

@@ -18,7 +18,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
         {
           "multi_match": {
             "query": "?0",
-            "fields": ["pname^3", "description^2", "pcompany"],
+            "fields": ["productName^3", "description^2", "productCompany"],
             "type": "best_fields",
             "fuzziness": "AUTO"
           }
@@ -36,14 +36,14 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
               {
                 "multi_match": {
                   "query": "?0",
-                  "fields": ["pname^3", "description^2", "pcompany"],
+                  "fields": ["productName^3", "description^2", "productCompany"],
                   "type": "best_fields",
                   "fuzziness": "AUTO"
                 }
               },
               {
                 "term": {
-                  "pcategory": "?1"
+                  "productCategory": "?1"
                 }
               }
             ]
@@ -62,7 +62,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
               {
                 "multi_match": {
                   "query": "?0",
-                  "fields": ["pname^3", "description^2", "pcompany"],
+                  "fields": ["productName^3", "description^2", "productCompany"],
                   "type": "best_fields",
                   "fuzziness": "AUTO"
                 }
@@ -71,7 +71,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
             "filter": [
               {
                 "range": {
-                  "pprice": {
+                  "productPrice": {
                     "gte": ?1,
                     "lte": ?2
                   }
@@ -86,7 +86,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
     /**
      * 카테고리별 상품 검색
      */
-    Page<ProductDocument> findByPcategory(String category, Pageable pageable);
+    Page<ProductDocument> findByProductCategory(String category, Pageable pageable);
 
     /**
      * 재고가 있는 상품만 검색
@@ -98,7 +98,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
               {
                 "multi_match": {
                   "query": "?0",
-                  "fields": ["pname^3", "description^2", "pcompany"],
+                  "fields": ["productName^3", "description^2", "productCompany"],
                   "type": "best_fields",
                   "fuzziness": "AUTO"
                 }
@@ -107,7 +107,7 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
             "filter": [
               {
                 "range": {
-                  "pstock": {
+                  "productStock": {
                     "gt": 0
                   }
                 }

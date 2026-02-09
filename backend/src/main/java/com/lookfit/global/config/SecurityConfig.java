@@ -13,6 +13,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -30,6 +32,11 @@ public class SecurityConfig {
                           JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -62,16 +69,19 @@ public class SecurityConfig {
                         .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/profile").permitAll()
 
                         // OAuth2 and Login
-                        .requestMatchers("/login/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
                         // Public API endpoints (no authentication required)
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/products/**").permitAll()
                         .requestMatchers("/api/v1/search/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
                         // Protected API endpoints (authentication required)
                         .requestMatchers("/api/v1/cart/**").authenticated()
+                        .requestMatchers("/api/v1/wishlist/**").authenticated()
                         .requestMatchers("/api/v1/orders/**").authenticated()
                         .requestMatchers("/api/v1/fitting/**").authenticated()
                         .requestMatchers("/api/members/**").authenticated()
@@ -93,8 +103,15 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutSuccessUrl("/"))
                 .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("/oauth2/authorization/google")  // 명시적으로 Google OAuth2 로그인 페이지 설정
                         .userInfoEndpoint(userInfoEndpoint -> {})
                         .successHandler(oAuth2SuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            // OAuth2 로그인 실패 시 로그 출력
+                            System.err.println("OAuth2 Login Failed: " + exception.getMessage());
+                            exception.printStackTrace();
+                            response.sendRedirect("http://localhost:5173/login?error=oauth_failed");
+                        })
                 );
         return http.build();
     }

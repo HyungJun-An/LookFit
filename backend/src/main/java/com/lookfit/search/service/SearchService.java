@@ -70,7 +70,7 @@ public class SearchService {
         // 키워드가 없으면 전체 검색
         if (keyword == null || keyword.isBlank()) {
             if (request.getCategory() != null && !request.getCategory().isBlank()) {
-                return productSearchRepository.findByPcategory(request.getCategory(), pageable);
+                return productSearchRepository.findByProductCategory(request.getCategory(), pageable);
             }
             return productSearchRepository.findAll(pageable);
         }

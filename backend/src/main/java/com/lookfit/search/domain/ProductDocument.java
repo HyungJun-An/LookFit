@@ -20,25 +20,25 @@ import java.math.BigDecimal;
 public class ProductDocument {
 
     @Id
-    private String pID;
+    private String productId;
 
     @Field(type = FieldType.Text, analyzer = "nori_analyzer")
-    private String pname;
+    private String productName;
 
     @Field(type = FieldType.Double)
-    private BigDecimal pprice;
+    private BigDecimal productPrice;
 
     @Field(type = FieldType.Keyword)
-    private String pcategory;
+    private String productCategory;
 
     @Field(type = FieldType.Text, analyzer = "nori_analyzer")
     private String description;
 
     @Field(type = FieldType.Keyword)
-    private String pcompany;
+    private String productCompany;
 
     @Field(type = FieldType.Integer)
-    private Integer pstock;
+    private Integer productStock;
 
     @Field(type = FieldType.Keyword)
     private String imageUrl;
@@ -52,13 +52,13 @@ public class ProductDocument {
         }
 
         return ProductDocument.builder()
-                .pID(product.getPID())
-                .pname(product.getPname())
-                .pprice(product.getPprice())
-                .pcategory(product.getPcategory())
+                .productId(product.getProductId())
+                .productName(product.getProductName())
+                .productPrice(product.getProductPrice())
+                .productCategory(product.getProductCategory())
                 .description(product.getDescription())
-                .pcompany(product.getPcompany())
-                .pstock(product.getPstock())
+                .productCompany(product.getProductCompany())
+                .productStock(product.getProductStock())
                 .imageUrl(product.getImageUrl())
                 .build();
     }

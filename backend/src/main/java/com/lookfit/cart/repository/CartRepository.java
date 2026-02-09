@@ -13,12 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, CartId> {
-    List<Cart> findByMemberid(String memberid);
+    List<Cart> findByMemberId(String memberId);
 
-    @Query("SELECT c FROM Cart c WHERE c.memberid = :memberid AND c.pID = :pID")
-    Optional<Cart> findByMemberidAndProductId(@Param("memberid") String memberid, @Param("pID") String pID);
+    @Query("SELECT c FROM Cart c WHERE c.memberId = :memberId AND c.productId = :productId")
+    Optional<Cart> findByMemberIdAndProductId(@Param("memberId") String memberId, @Param("productId") String productId);
 
     @Modifying
-    @Query("DELETE FROM Cart c WHERE c.memberid = :memberid AND c.pID = :pID")
-    void deleteByMemberidAndProductId(@Param("memberid") String memberid, @Param("pID") String pID);
+    @Query("DELETE FROM Cart c WHERE c.memberId = :memberId AND c.productId = :productId")
+    void deleteByMemberIdAndProductId(@Param("memberId") String memberId, @Param("productId") String productId);
 }

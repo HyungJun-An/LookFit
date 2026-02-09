@@ -1,5 +1,6 @@
 package com.lookfit.order.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lookfit.order.domain.Buy;
 import com.lookfit.order.domain.OrderItem;
 import jakarta.validation.constraints.NotBlank;
@@ -93,17 +94,26 @@ public class OrderDto {
     @Getter
     @Builder
     public static class ItemDto {
-        private String pID;
-        private String pname;
-        private BigDecimal pprice;
+        @JsonProperty("productId")
+        private String productId;
+
+        @JsonProperty("productName")
+        private String productName;
+
+        @JsonProperty("productPrice")
+        private BigDecimal productPrice;
+
+        @JsonProperty("amount")
         private Integer amount;
+
+        @JsonProperty("subtotal")
         private BigDecimal subtotal;
 
         public static ItemDto from(OrderItem item) {
             return ItemDto.builder()
-                    .pID(item.getPID())
-                    .pname(item.getPname())
-                    .pprice(item.getPprice())
+                    .productId(item.getProductId())
+                    .productName(item.getProductName())
+                    .productPrice(item.getProductPrice())
                     .amount(item.getAmount())
                     .subtotal(item.getSubtotal())
                     .build();

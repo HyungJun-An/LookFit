@@ -26,7 +26,7 @@ public class ProductService {
 
         Page<Product> productPage;
         if (category != null && !category.isEmpty()) {
-            productPage = productRepository.findByPcategory(category, pageable);
+            productPage = productRepository.findByProductCategory(category, pageable);
         } else {
             productPage = productRepository.findAll(pageable);
         }
@@ -41,8 +41,8 @@ public class ProductService {
                 .build();
     }
 
-    public ProductDto.Response getProduct(String pID) {
-        Product product = productRepository.findById(pID)
+    public ProductDto.Response getProduct(String productId) {
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
         return ProductDto.Response.from(product);
     }
@@ -52,9 +52,9 @@ public class ProductService {
             return Sort.unsorted();
         }
         return switch (sort) {
-            case "price_asc" -> Sort.by(Sort.Direction.ASC, "pprice");
-            case "price_desc" -> Sort.by(Sort.Direction.DESC, "pprice");
-            case "newest" -> Sort.by(Sort.Direction.DESC, "pID");
+            case "price_asc" -> Sort.by(Sort.Direction.ASC, "productPrice");
+            case "price_desc" -> Sort.by(Sort.Direction.DESC, "productPrice");
+            case "newest" -> Sort.by(Sort.Direction.DESC, "productId");
             default -> Sort.unsorted();
         };
     }

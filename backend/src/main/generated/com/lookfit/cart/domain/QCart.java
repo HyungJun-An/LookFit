@@ -28,15 +28,15 @@ public class QCart extends EntityPathBase<Cart> {
 
     public final com.lookfit.member.domain.QMember member;
 
-    public final StringPath memberid = createString("memberid");
-
-    public final StringPath pID = createString("pID");
-
-    public final StringPath pname = createString("pname");
-
-    public final NumberPath<java.math.BigDecimal> pprice = createNumber("pprice", java.math.BigDecimal.class);
+    public final StringPath memberId = createString("memberId");
 
     public final com.lookfit.product.domain.QProduct product;
+
+    public final StringPath productId = createString("productId");
+
+    public final StringPath productName = createString("productName");
+
+    public final NumberPath<java.math.BigDecimal> productPrice = createNumber("productPrice", java.math.BigDecimal.class);
 
     public QCart(String variable) {
         this(Cart.class, forVariable(variable), INITS);

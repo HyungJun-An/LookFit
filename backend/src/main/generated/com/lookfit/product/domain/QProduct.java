@@ -23,17 +23,17 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath imageUrl = createString("imageUrl");
 
-    public final StringPath pcategory = createString("pcategory");
+    public final StringPath productCategory = createString("productCategory");
 
-    public final StringPath pcompany = createString("pcompany");
+    public final StringPath productCompany = createString("productCompany");
 
-    public final StringPath pID = createString("pID");
+    public final StringPath productId = createString("productId");
 
-    public final StringPath pname = createString("pname");
+    public final StringPath productName = createString("productName");
 
-    public final NumberPath<java.math.BigDecimal> pprice = createNumber("pprice", java.math.BigDecimal.class);
+    public final NumberPath<java.math.BigDecimal> productPrice = createNumber("productPrice", java.math.BigDecimal.class);
 
-    public final NumberPath<Integer> pstock = createNumber("pstock", Integer.class);
+    public final NumberPath<Integer> productStock = createNumber("productStock", Integer.class);
 
     public QProduct(String variable) {
         super(Product.class, forVariable(variable));

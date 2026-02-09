@@ -71,18 +71,18 @@ class OrderServiceTest {
         createRequest.setResRequirement("문 앞에 놓아주세요");
 
         product = Product.builder()
-                .pID("PROD001")
-                .pname("테스트 상품")
-                .pprice(BigDecimal.valueOf(50000))
-                .pstock(100)
-                .pcategory("의류")
+                .productId("PROD001")
+                .productName("테스트 상품")
+                .productPrice(BigDecimal.valueOf(50000))
+                .productStock(100)
+                .productCategory("의류")
                 .build();
 
         cart = Cart.builder()
-                .pID("PROD001")
-                .memberid(memberId)
-                .pname("테스트 상품")
-                .pprice(BigDecimal.valueOf(50000))
+                .productId("PROD001")
+                .memberId(memberId)
+                .productName("테스트 상품")
+                .productPrice(BigDecimal.valueOf(50000))
                 .amount(2)
                 .build();
 
@@ -106,7 +106,7 @@ class OrderServiceTest {
         @DisplayName("성공: 장바구니 상품을 주문으로 전환")
         void createOrder_Success() {
             // given
-            given(cartRepository.findByMemberid(memberId)).willReturn(List.of(cart));
+            given(cartRepository.findByMemberId(memberId)).willReturn(List.of(cart));
             given(productRepository.findById("PROD001")).willReturn(Optional.of(product));
             given(orderRepository.save(any(Buy.class))).willReturn(savedBuy);
             given(orderItemRepository.save(any(OrderItem.class))).willAnswer(invocation -> {
@@ -125,11 +125,11 @@ class OrderServiceTest {
             assertThat(response.getTotalprice()).isEqualTo(BigDecimal.valueOf(100000));
             assertThat(response.getResName()).isEqualTo("홍길동");
             assertThat(response.getItems()).hasSize(1);
-            assertThat(response.getItems().get(0).getPID()).isEqualTo("PROD001");
+            assertThat(response.getItems().get(0).getProductId()).isEqualTo("PROD001");
             assertThat(response.getItems().get(0).getAmount()).isEqualTo(2);
 
             // 재고 차감 검증
-            verify(productRepository).save(argThat(p -> p.getPstock() == 98));
+            verify(productRepository).save(argThat(p -> p.getProductStock() == 98));
             // 장바구니 비우기 검증
             verify(cartRepository).deleteAll(List.of(cart));
         }
@@ -138,7 +138,7 @@ class OrderServiceTest {
         @DisplayName("실패: 장바구니가 비어있는 경우")
         void createOrder_CartEmpty() {
             // given
-            given(cartRepository.findByMemberid(memberId)).willReturn(Collections.emptyList());
+            given(cartRepository.findByMemberId(memberId)).willReturn(Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> orderService.createOrder(memberId, createRequest))
@@ -155,8 +155,8 @@ class OrderServiceTest {
         @DisplayName("실패: 재고 부족")
         void createOrder_InsufficientStock() {
             // given
-            product.setPstock(1); // 재고를 1로 설정 (요청 수량 2보다 적음)
-            given(cartRepository.findByMemberid(memberId)).willReturn(List.of(cart));
+            product.setProductStock(1); // 재고를 1로 설정 (요청 수량 2보다 적음)
+            given(cartRepository.findByMemberId(memberId)).willReturn(List.of(cart));
             given(productRepository.findById("PROD001")).willReturn(Optional.of(product));
 
             // when & then
@@ -174,7 +174,7 @@ class OrderServiceTest {
         @DisplayName("실패: 상품을 찾을 수 없는 경우")
         void createOrder_ProductNotFound() {
             // given
-            given(cartRepository.findByMemberid(memberId)).willReturn(List.of(cart));
+            given(cartRepository.findByMemberId(memberId)).willReturn(List.of(cart));
             given(productRepository.findById("PROD001")).willReturn(Optional.empty());
 
             // when & then
@@ -237,9 +237,9 @@ class OrderServiceTest {
             OrderItem orderItem = OrderItem.builder()
                     .itemId(1L)
                     .orderno(1)
-                    .pID("PROD001")
-                    .pname("테스트 상품")
-                    .pprice(BigDecimal.valueOf(50000))
+                    .productId("PROD001")
+                    .productName("테스트 상품")
+                    .productPrice(BigDecimal.valueOf(50000))
                     .amount(2)
                     .subtotal(BigDecimal.valueOf(100000))
                     .build();
@@ -254,7 +254,7 @@ class OrderServiceTest {
             assertThat(response).isNotNull();
             assertThat(response.getOrderno()).isEqualTo(1);
             assertThat(response.getItems()).hasSize(1);
-            assertThat(response.getItems().get(0).getPID()).isEqualTo("PROD001");
+            assertThat(response.getItems().get(0).getProductId()).isEqualTo("PROD001");
         }
 
         @Test

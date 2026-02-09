@@ -1,5 +1,6 @@
 package com.lookfit.product.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lookfit.product.domain.Product;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,24 +12,39 @@ public class ProductDto {
     @Getter
     @Builder
     public static class Response {
-        private String pID;
-        private String pname;
-        private BigDecimal pprice;
-        private String pcategory;
+        @JsonProperty("productId")
+        private String productId;
+
+        @JsonProperty("productName")
+        private String productName;
+
+        @JsonProperty("productPrice")
+        private BigDecimal productPrice;
+
+        @JsonProperty("productCategory")
+        private String productCategory;
+
+        @JsonProperty("description")
         private String description;
-        private String pcompany;
-        private Integer pstock;
+
+        @JsonProperty("productCompany")
+        private String productCompany;
+
+        @JsonProperty("productStock")
+        private Integer productStock;
+
+        @JsonProperty("imageUrl")
         private String imageUrl;
 
         public static Response from(Product product) {
             return Response.builder()
-                    .pID(product.getPID())
-                    .pname(product.getPname())
-                    .pprice(product.getPprice())
-                    .pcategory(product.getPcategory())
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .productPrice(product.getProductPrice())
+                    .productCategory(product.getProductCategory())
                     .description(product.getDescription())
-                    .pcompany(product.getPcompany())
-                    .pstock(product.getPstock())
+                    .productCompany(product.getProductCompany())
+                    .productStock(product.getProductStock())
                     .imageUrl(product.getImageUrl())
                     .build();
         }

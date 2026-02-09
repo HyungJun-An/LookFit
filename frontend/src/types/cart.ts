@@ -1,8 +1,8 @@
 export type CartItem = {
-  pID: string;
-  pname: string;
+  productId: string;
+  productName: string;
   amount: number;
-  pprice: number;
+  productPrice: number;
   subtotal: number;
   imageUrl: string;
 }

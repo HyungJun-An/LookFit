@@ -25,7 +25,7 @@ public class CartService {
     private final ProductRepository productRepository;
 
     public CartDto.ListResponse getCart(String memberId) {
-        List<Cart> cartItems = cartRepository.findByMemberid(memberId);
+        List<Cart> cartItems = cartRepository.findByMemberId(memberId);
 
         List<CartDto.ItemResponse> items = cartItems.stream()
                 .map(CartDto.ItemResponse::from)
@@ -36,7 +36,7 @@ public class CartService {
                 .sum();
 
         BigDecimal totalPrice = cartItems.stream()
-                .map(cart -> cart.getPprice().multiply(BigDecimal.valueOf(cart.getAmount())))
+                .map(cart -> cart.getProductPrice().multiply(BigDecimal.valueOf(cart.getAmount())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return CartDto.ListResponse.builder()
@@ -48,26 +48,26 @@ public class CartService {
 
     @Transactional
     public CartDto.ItemResponse addToCart(String memberId, CartDto.AddRequest request) {
-        Product product = productRepository.findById(request.getPID())
+        Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        if (product.getPstock() < request.getAmount()) {
+        if (product.getProductStock() < request.getAmount()) {
             throw new BusinessException(ErrorCode.PRODUCT_OUT_OF_STOCK);
         }
 
         // Get product image URL (placeholder for now)
-        String imageUrl = "https://via.placeholder.com/400x533?text=" + product.getPname();
+        String imageUrl = "https://via.placeholder.com/400x533?text=" + product.getProductName();
 
-        Cart cart = cartRepository.findByMemberidAndProductId(memberId, request.getPID())
+        Cart cart = cartRepository.findByMemberIdAndProductId(memberId, request.getProductId())
                 .map(existingCart -> {
                     existingCart.setAmount(existingCart.getAmount() + request.getAmount());
                     return existingCart;
                 })
                 .orElseGet(() -> Cart.builder()
-                        .pID(product.getPID())
-                        .memberid(memberId)
-                        .pname(product.getPname())
-                        .pprice(product.getPprice())
+                        .productId(product.getProductId())
+                        .memberId(memberId)
+                        .productName(product.getProductName())
+                        .productPrice(product.getProductPrice())
                         .amount(request.getAmount())
                         .imageUrl(imageUrl)
                         .build());
@@ -77,14 +77,14 @@ public class CartService {
     }
 
     @Transactional
-    public CartDto.ItemResponse updateCartItem(String memberId, String pID, CartDto.UpdateRequest request) {
-        Cart cart = cartRepository.findByMemberidAndProductId(memberId, pID)
+    public CartDto.ItemResponse updateCartItem(String memberId, String productId, CartDto.UpdateRequest request) {
+        Cart cart = cartRepository.findByMemberIdAndProductId(memberId, productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND));
 
-        Product product = productRepository.findById(pID)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        if (product.getPstock() < request.getAmount()) {
+        if (product.getProductStock() < request.getAmount()) {
             throw new BusinessException(ErrorCode.PRODUCT_OUT_OF_STOCK);
         }
 
@@ -94,21 +94,21 @@ public class CartService {
     }
 
     @Transactional
-    public void removeFromCart(String memberId, String pID) {
-        log.debug("Attempting to remove from cart - memberId: {}, pID: {}", memberId, pID);
+    public void removeFromCart(String memberId, String productId) {
+        log.debug("Attempting to remove from cart - memberId: {}, productId: {}", memberId, productId);
 
         // Check all cart items for this member
-        List<Cart> allCartItems = cartRepository.findByMemberid(memberId);
+        List<Cart> allCartItems = cartRepository.findByMemberId(memberId);
         log.debug("Found {} cart items for member", allCartItems.size());
         allCartItems.forEach(item ->
-            log.debug("Cart item - pID: '{}', memberid: '{}'", item.getPID(), item.getMemberid())
+            log.debug("Cart item - productId: '{}', memberId: '{}'", item.getProductId(), item.getMemberId())
         );
 
-        if (!cartRepository.findByMemberidAndProductId(memberId, pID).isPresent()) {
-            log.error("Cart item not found - memberId: '{}', pID: '{}'", memberId, pID);
+        if (!cartRepository.findByMemberIdAndProductId(memberId, productId).isPresent()) {
+            log.error("Cart item not found - memberId: '{}', productId: '{}'", memberId, productId);
             throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
-        cartRepository.deleteByMemberidAndProductId(memberId, pID);
-        log.debug("Successfully deleted cart item - memberId: {}, pID: {}", memberId, pID);
+        cartRepository.deleteByMemberIdAndProductId(memberId, productId);
+        log.debug("Successfully deleted cart item - memberId: {}, productId: {}", memberId, productId);
     }
 }

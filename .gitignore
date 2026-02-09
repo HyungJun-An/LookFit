@@ -12,3 +12,4 @@
 # Gradle
 .gradle/
 build/
+./scripts/**

@@ -2,10 +2,28 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .main-content {
   flex: 1;
   padding: var(--space-6) 0;
   min-height: calc(100vh - 80px);
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    padding: var(--space-4) 0;
+    min-height: calc(100vh - 120px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: var(--space-3) 0;
+  }
 }

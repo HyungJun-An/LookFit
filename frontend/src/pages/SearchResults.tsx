@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { getImageUrl } from '../utils/imageUtils';
+import axiosInstance from '../api/axiosInstance';
 import '../styles/SearchResults.css';
 
 interface Product {
@@ -43,9 +44,6 @@ const SearchResults = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-
       const params: any = {
         sort: selectedSort,
         size: 20,
@@ -54,10 +52,7 @@ const SearchResults = () => {
       if (keyword) params.keyword = keyword;
       if (category) params.category = category;
 
-      const response = await axios.get<SearchResultPage>(
-        'http://localhost:8080/api/v1/search',
-        { params, ...config }
-      );
+      const response = await axiosInstance.get<SearchResultPage>('/api/v1/search', { params });
 
       setResults(response.data);
     } catch (err) {
@@ -142,14 +137,14 @@ const SearchResults = () => {
               className="product-card"
             >
               <img
-                src={product.imageUrl}
-                alt={product.pname}
+                src={getImageUrl(product.imageUrl)}
+                alt={product.productName}
                 className="product-card__image"
               />
               <div className="product-card__info">
-                <p className="product-card__category">{product.pcategory}</p>
-                <h3 className="product-card__name">{product.pname}</h3>
-                <p className="product-card__price">{formatPrice(product.pprice)}원</p>
+                <p className="product-card__category">{product.productCategory}</p>
+                <h3 className="product-card__name">{product.productName}</h3>
+                <p className="product-card__price">{formatPrice(product.productPrice)}원</p>
               </div>
             </Link>
           ))}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { AiOutlineHeart, AiOutlineEye } from 'react-icons/ai';
+import axiosInstance from '../api/axiosInstance';
+import { useAuth } from '../context/AuthContext';
 import type { ProductSummary } from '../types/product';
+import { getImageUrl } from '../utils/imageUtils';
 import '../styles/ProductList.css';
 
 type ProductListResponse = {
@@ -23,15 +24,23 @@ const sortOptions = [
 
 const ProductList = () => {
   const navigate = useNavigate();
+  const { memberId } = useAuth();
   const [products, setProducts] = useState<ProductSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [selectedSort, setSelectedSort] = useState('newest');
   const [totalElements, setTotalElements] = useState(0);
+  const [wishlistStatus, setWishlistStatus] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, selectedSort]);
+
+  useEffect(() => {
+    if (memberId) {
+      fetchWishlistStatus();
+    }
+  }, [memberId, products]);
 
   const fetchProducts = async () => {
     try {
@@ -45,8 +54,8 @@ const ProductList = () => {
         params.category = selectedCategory;
       }
 
-      const response = await axios.get<ProductListResponse>(
-        'http://localhost:8080/api/v1/products',
+      const response = await axiosInstance.get<ProductListResponse>(
+        '/api/v1/products',
         { params }
       );
 
@@ -60,8 +69,75 @@ const ProductList = () => {
     }
   };
 
-  const handleProductClick = (pid: string) => {
-    navigate(`/products/${pid}`);
+  const fetchWishlistStatus = async () => {
+    if (!memberId || products.length === 0) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await axiosInstance.get('/api/v1/wishlist');
+
+      const wishlisted = response.data.items || [];
+      const statusMap: {[key: string]: boolean} = {};
+
+      wishlisted.forEach((item: any) => {
+        statusMap[item.productId] = true;
+      });
+
+      setWishlistStatus(statusMap);
+    } catch (error) {
+      console.error('Failed to fetch wishlist status:', error);
+    }
+  };
+
+  const handleWishlistToggle = async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+
+    if (!memberId) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      const isCurrentlyWishlisted = wishlistStatus[productId];
+
+      if (isCurrentlyWishlisted) {
+        // Remove from wishlist
+        await axiosInstance.delete(`/api/v1/wishlist/${productId}`);
+
+        setWishlistStatus(prev => ({
+          ...prev,
+          [productId]: false,
+        }));
+      } else {
+        // Add to wishlist
+        await axiosInstance.post('/api/v1/wishlist', { productId: productId });
+
+        setWishlistStatus(prev => ({
+          ...prev,
+          [productId]: true,
+        }));
+      }
+    } catch (error: any) {
+      console.error('Failed to toggle wishlist:', error);
+      // 401 에러는 axios interceptor에서 처리됨
+      if (error.response?.status !== 401) {
+        alert('찜 목록 업데이트에 실패했습니다.');
+      }
+    }
+  };
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/products/${productId}`);
   };
 
   const handleCategoryClick = (category: string) => {
@@ -157,37 +233,34 @@ const ProductList = () => {
         <div className="product-grid">
           {products.map((product) => (
             <div
-              key={product.pid}
+              key={product.productId}
               className="product-card"
-              onClick={() => handleProductClick(product.pid)}
+              onClick={() => handleProductClick(product.productId)}
             >
               <div className="product-card__image-wrapper">
                 <img
-                  src={product.imageUrl || 'https://via.placeholder.com/400x533?text=No+Image'}
-                  alt={product.pname}
+                  src={getImageUrl(product.imageUrl)}
+                  alt={product.productName}
                   className="product-card__image"
                   loading="lazy"
                 />
-                {product.pstock && product.pstock < 10 && (
+                {product.productStock && product.productStock < 10 && (
                   <span className="product-card__badge">품절임박</span>
                 )}
                 <div className="product-card__actions">
                   <button
-                    className="product-card__action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // TODO: Add to wishlist
-                    }}
+                    className={`product-card__action-btn ${wishlistStatus[product.productId] ? 'active' : ''}`}
+                    onClick={(e) => handleWishlistToggle(e, product.productId)}
                     aria-label="찜하기"
-                    title="찜하기"
+                    title={wishlistStatus[product.productId] ? '찜 해제' : '찜하기'}
                   >
-                    <span className="icon-heart">♥</span>
+                    <span className="icon-heart">{wishlistStatus[product.productId] ? '❤️' : '♡'}</span>
                   </button>
                   <button
                     className="product-card__action-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate('/fitting', { state: { productId: product.pid } });
+                      navigate('/fitting', { state: { productId: product.productId } });
                     }}
                     aria-label="AI 착장샷"
                     title="AI 착장샷"
@@ -197,9 +270,9 @@ const ProductList = () => {
                 </div>
               </div>
               <div className="product-card__info">
-                <p className="product-card__brand">{product.pcompany || 'LookFit'}</p>
-                <h3 className="product-card__name">{product.pname}</h3>
-                <p className="product-card__price">{formatPrice(product.pprice)}</p>
+                <p className="product-card__brand">{product.productCompany || 'LookFit'}</p>
+                <h3 className="product-card__name">{product.productName}</h3>
+                <p className="product-card__price">{formatPrice(product.productPrice)}</p>
                 <div className="product-card__meta">
                   <div className="product-card__rating">
                     <span className="product-card__rating-star">★</span>

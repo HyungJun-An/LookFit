@@ -30,20 +30,20 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping("/{pID}")
+    @PatchMapping("/{productId}")
     public ResponseEntity<CartDto.ItemResponse> updateCartItem(
             @AuthenticationPrincipal String memberId,
-            @PathVariable String pID,
+            @PathVariable String productId,
             @Valid @RequestBody CartDto.UpdateRequest request) {
-        CartDto.ItemResponse response = cartService.updateCartItem(memberId, pID, request);
+        CartDto.ItemResponse response = cartService.updateCartItem(memberId, productId, request);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{pID}")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<Void> removeFromCart(
             @AuthenticationPrincipal String memberId,
-            @PathVariable String pID) {
-        cartService.removeFromCart(memberId, pID);
+            @PathVariable String productId) {
+        cartService.removeFromCart(memberId, productId);
         return ResponseEntity.noContent().build();
     }
 }

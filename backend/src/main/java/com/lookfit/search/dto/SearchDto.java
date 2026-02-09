@@ -1,5 +1,6 @@
 package com.lookfit.search.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lookfit.search.domain.ProductDocument;
 import lombok.*;
 
@@ -38,11 +39,22 @@ public class SearchDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SearchResponse {
-        private String pid;
-        private String pname;
-        private BigDecimal pprice;
-        private String pcategory;
+        @JsonProperty("productId")
+        private String productId;
+
+        @JsonProperty("productName")
+        private String productName;
+
+        @JsonProperty("productPrice")
+        private BigDecimal productPrice;
+
+        @JsonProperty("productCategory")
+        private String productCategory;
+
+        @JsonProperty("imageUrl")
         private String imageUrl;
+
+        @JsonProperty("relevanceScore")
         private Double relevanceScore;
 
         /**
@@ -54,10 +66,10 @@ public class SearchDto {
             }
 
             return SearchResponse.builder()
-                    .pid(document.getPID())
-                    .pname(document.getPname())
-                    .pprice(document.getPprice())
-                    .pcategory(document.getPcategory())
+                    .productId(document.getProductId())
+                    .productName(document.getProductName())
+                    .productPrice(document.getProductPrice())
+                    .productCategory(document.getProductCategory())
                     .imageUrl(document.getImageUrl())
                     .relevanceScore(score != null ? score.doubleValue() : 0.0)
                     .build();

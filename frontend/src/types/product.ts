@@ -1,23 +1,23 @@
 export type ProductSummary = {
-  pid: string;
-  pname: string;
-  pprice: number;
-  pcategory: string;
+  productId: string;
+  productName: string;
+  productPrice: number;
+  productCategory: string;
   description: string;
-  pcompany: string;
-  pstock: number;
+  productCompany: string;
+  productStock: number;
   imageUrl?: string;
   thumbnailUrl?: string;
 }
 
 export type Product = {
-  pid: string;
-  pname: string;
-  pprice: number;
-  pcategory: string;
+  productId: string;
+  productName: string;
+  productPrice: number;
+  productCategory: string;
   description: string;
-  pcompany: string;
-  pstock: number;
+  productCompany: string;
+  productStock: number;
   images?: string[];
   sizes?: string[];
   colors?: string[];

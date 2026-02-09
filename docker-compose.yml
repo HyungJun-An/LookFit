@@ -5,34 +5,36 @@ services:
     image: mysql:8.0
     container_name: lookfit-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 651212
+      MYSQL_ROOT_PASSWORD: "651212"
       MYSQL_DATABASE: lookfit_db
-      MYSQL_CHARACTER_SET_SERVER: utf8mb4
-      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - lookfit-network
 
+  # [검색 엔진]
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
     container_name: lookfit-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
-      - "9300:9300"
     volumes:
       - es_data:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    networks:
+      - lookfit-network
+
+networks:
+  lookfit-network:
+    driver: bridge
 
 volumes:
   mysql_data:
   es_data:
+  ollama_data:
+  openclaw_config:

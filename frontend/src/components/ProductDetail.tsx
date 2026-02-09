@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
+import { getImageUrl } from '../utils/imageUtils';
 import type { Product } from '../types/product';
 import { useAuth } from '../context/AuthContext';
 import '../styles/ProductDetail.css';
 
 const ProductDetail = () => {
-  const { pID } = useParams<{ pID: string }>();
+  const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const { memberId } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
@@ -19,11 +20,12 @@ const ProductDetail = () => {
   const [addingToCart, setAddingToCart] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  console.log(productId);
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8080/api/v1/products/${pID}`);
+        const response = await axiosInstance.get(`/api/v1/products/${productId}`);
         setProduct(response.data);
 
         // Set main image (use first image from gallery or placeholder)
@@ -40,10 +42,32 @@ const ProductDetail = () => {
       }
     };
 
-    if (pID) {
+    if (productId) {
       fetchProduct();
     }
-  }, [pID]);
+  }, [productId]);
+
+  // Fetch wishlist status when product is loaded
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      if (!memberId || !productId) return;
+
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const response = await axiosInstance.get('/api/v1/wishlist');
+
+        const wishlisted = response.data.items || [];
+        const isInWishlist = wishlisted.some((item: any) => item.productId === productId);
+        setIsWishlisted(isInWishlist);
+      } catch (error) {
+        console.error('Failed to fetch wishlist status:', error);
+      }
+    };
+
+    fetchWishlistStatus();
+  }, [memberId, productId]);
 
   const handleAddToCart = async () => {
     if (!memberId) {
@@ -66,23 +90,14 @@ const ProductDetail = () => {
         return;
       }
 
-      console.log('Adding to cart:', { pID: product.pid, amount: quantity });
+      console.log('Adding to cart:', { productId: product.productId, amount: quantity });
 
-      await axios.post(
-        'http://localhost:8080/api/v1/cart',
-        {
-          pID: product.pid,
-          amount: quantity
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
+      await axiosInstance.post('/api/v1/cart', {
+        productId: product.productId,
+        amount: quantity
+      });
 
-      alert(`${product.pname}이(가) 장바구니에 추가되었습니다!`);
+      alert(`${product.productName}이(가) 장바구니에 추가되었습니다!`);
 
       // Ask if user wants to go to cart
       const goToCart = confirm('장바구니로 이동하시겠습니까?');
@@ -91,10 +106,8 @@ const ProductDetail = () => {
       }
     } catch (error: any) {
       console.error('Failed to add to cart:', error);
-      if (error.response?.status === 401) {
-        alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
-        navigate('/login');
-      } else {
+      // 401 에러는 axios interceptor에서 처리됨
+      if (error.response?.status !== 401) {
         alert('장바구니 추가에 실패했습니다.');
       }
     } finally {
@@ -110,19 +123,44 @@ const ProductDetail = () => {
   };
 
   const handleFittingClick = () => {
-    navigate('/fitting', { state: { productId: pID } });
+    navigate('/fitting', { state: { productId: productId } });
   };
 
-  const handleWishlist = () => {
+  const handleWishlist = async () => {
     if (!memberId) {
       alert('로그인이 필요한 서비스입니다.');
       navigate('/login');
       return;
     }
 
-    // TODO: Implement wishlist API
-    setIsWishlisted(!isWishlisted);
-    alert(isWishlisted ? '찜 목록에서 제거되었습니다.' : '찜 목록에 추가되었습니다!');
+    if (!productId) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      if (isWishlisted) {
+        // Remove from wishlist
+        await axiosInstance.delete(`/api/v1/wishlist/${productId}`);
+        setIsWishlisted(false);
+        alert('찜 목록에서 제거되었습니다.');
+      } else {
+        // Add to wishlist
+        await axiosInstance.post('/api/v1/wishlist', { productId: productId });
+        setIsWishlisted(true);
+        alert('찜 목록에 추가되었습니다!');
+      }
+    } catch (error: any) {
+      console.error('Failed to toggle wishlist:', error);
+      // 401 에러는 axios interceptor에서 처리됨
+      if (error.response?.status !== 401) {
+        alert('찜 목록 업데이트에 실패했습니다.');
+      }
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -187,7 +225,7 @@ const ProductDetail = () => {
       {/* Image Gallery */}
       <div className="product-detail__gallery">
         <div className="main-image">
-          <img src={mainImage} alt={product.pname} />
+          <img src={mainImage} alt={product.productName} />
         </div>
         {productImages.length > 1 && (
           <div className="thumbnail-list">
@@ -195,7 +233,7 @@ const ProductDetail = () => {
               <img
                 key={index}
                 src={img}
-                alt={`${product.pname} ${index + 1}`}
+                alt={`${product.productName} ${index + 1}`}
                 className={mainImage === img ? 'active' : ''}
                 onClick={() => setMainImage(img)}
               />
@@ -206,9 +244,9 @@ const ProductDetail = () => {
 
       {/* Product Info */}
       <div className="product-detail__info">
-        <div className="product-brand">{product.pcompany || 'LookFit'}</div>
-        <h1 className="product-name">{product.pname}</h1>
-        <div className="product-price">{formatPrice(product.pprice)}</div>
+        <div className="product-brand">{product.productCompany || 'LookFit'}</div>
+        <h1 className="product-name">{product.productName}</h1>
+        <div className="product-price">{formatPrice(product.productPrice)}</div>
 
         {product.description && (
           <div className="product-description">
@@ -234,10 +272,10 @@ const ProductDetail = () => {
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                 min="1"
-                max={product.pstock}
+                max={product.productStock}
               />
               <button
-                onClick={() => setQuantity(Math.min(product.pstock, quantity + 1))}
+                onClick={() => setQuantity(Math.min(product.productStock, quantity + 1))}
                 aria-label="수량 증가"
               >
                 +
@@ -249,7 +287,7 @@ const ProductDetail = () => {
           <div className="option-group">
             <label>총 금액</label>
             <div className="product-price" style={{ fontSize: 'var(--text-2xl)' }}>
-              {formatPrice(product.pprice * quantity)}
+              {formatPrice(product.productPrice * quantity)}
             </div>
           </div>
         </div>
@@ -259,14 +297,14 @@ const ProductDetail = () => {
           <button
             className="btn-add-cart"
             onClick={handleAddToCart}
-            disabled={addingToCart || product.pstock === 0}
+            disabled={addingToCart || product.productStock === 0}
           >
-            {addingToCart ? '추가 중...' : product.pstock === 0 ? '품절' : '장바구니 담기'}
+            {addingToCart ? '추가 중...' : product.productStock === 0 ? '품절' : '장바구니 담기'}
           </button>
           <button
             className="btn-buy-now"
             onClick={handleBuyNow}
-            disabled={product.pstock === 0}
+            disabled={product.productStock === 0}
           >
             바로 구매
           </button>
@@ -313,16 +351,16 @@ const ProductDetail = () => {
         <div className="product-meta">
           <div className="meta-item">
             <span className="meta-label">브랜드</span>
-            <span className="meta-value">{product.pcompany || 'LookFit'}</span>
+            <span className="meta-value">{product.productCompany || 'LookFit'}</span>
           </div>
           <div className="meta-item">
             <span className="meta-label">카테고리</span>
-            <span className="meta-value">{product.pcategory}</span>
+            <span className="meta-value">{product.productCategory}</span>
           </div>
           <div className="meta-item">
             <span className="meta-label">재고</span>
             <span className="meta-value">
-              {product.pstock > 0 ? `${product.pstock}개` : '품절'}
+              {product.productStock > 0 ? `${product.productStock}개` : '품절'}
             </span>
           </div>
         </div>

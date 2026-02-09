@@ -27,17 +27,17 @@ public class OrderItem {
     private Buy buy;
 
     @Column(name = "pID", length = 30, nullable = false)
-    private String pID;
+    private String productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pID", referencedColumnName = "pID", insertable = false, updatable = false)
     private Product product;
 
     @Column(name = "pname", length = 30)
-    private String pname;
+    private String productName;
 
     @Column(name = "pprice", precision = 10, scale = 0)
-    private BigDecimal pprice;
+    private BigDecimal productPrice;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;

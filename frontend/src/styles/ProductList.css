@@ -229,6 +229,20 @@
   box-shadow: var(--shadow-lg);
 }
 
+.product-card__action-btn.active {
+  background: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.product-card__action-btn.active .icon-heart {
+  color: var(--color-text-inverse);
+}
+
+.product-card__action-btn.active:hover {
+  background: #ff7875;
+  border-color: #ff7875;
+}
+
 .product-card__info {
   display: flex;
   flex-direction: column;

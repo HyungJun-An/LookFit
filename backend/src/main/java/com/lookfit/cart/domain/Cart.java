@@ -18,11 +18,11 @@ public class Cart {
 
     @Id
     @Column(name = "pID", length = 30, nullable = false)
-    private String pID;
+    private String productId;
 
     @Id
     @Column(name = "memberid", length = 100, nullable = false)
-    private String memberid;
+    private String memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pID", referencedColumnName = "pID", insertable = false, updatable = false)
@@ -33,13 +33,13 @@ public class Cart {
     private Member member;
 
     @Column(name = "pname", length = 30)
-    private String pname;
+    private String productName;
 
     @Column(name = "amount")
     private Integer amount;
 
     @Column(name = "pprice", precision = 10, scale = 0)
-    private BigDecimal pprice;
+    private BigDecimal productPrice;
 
     @Column(name = "image_url", length = 500)
     private String imageUrl;

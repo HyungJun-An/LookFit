@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
+import { getImageUrl } from '../utils/imageUtils';
 import { useAuth } from '../context/AuthContext';
 import type { Cart, CartItem } from '../types/cart';
 import '../styles/Cart.css';
@@ -21,17 +22,12 @@ const CartPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get<Cart>('http://localhost:8080/api/v1/cart', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get<Cart>('/api/v1/cart');
       setCart(response.data);
     } catch (err: any) {
       console.error("Error fetching cart:", err);
-      if (err.response?.status === 401) {
-        setError("로그인이 필요합니다.");
-      } else {
+      // 401 에러는 axios interceptor에서 처리됨
+      if (err.response?.status !== 401) {
         setError("장바구니를 불러오는데 실패했습니다.");
       }
     } finally {
@@ -43,7 +39,7 @@ const CartPage = () => {
     fetchCart();
   }, [token, isAuthenticated]);
 
-  const handleUpdateQuantity = async (pID: string, newAmount: number) => {
+  const handleUpdateQuantity = async (productId: string, newAmount: number) => {
     if (newAmount < 1) return;
     if (!token) {
       alert("로그인이 필요합니다.");
@@ -51,27 +47,18 @@ const CartPage = () => {
     }
 
     try {
-      await axios.patch(
-        `http://localhost:8080/api/v1/cart/${pID}`,
-        { amount: newAmount },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axiosInstance.patch(`/api/v1/cart/${productId}`, { amount: newAmount });
       fetchCart();
     } catch (err: any) {
       console.error("Error updating cart:", err);
-      if (err.response?.status === 401) {
-        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-      } else {
+      // 401 에러는 axios interceptor에서 처리됨
+      if (err.response?.status !== 401) {
         alert("수량 변경에 실패했습니다.");
       }
     }
   };
 
-  const handleRemoveItem = async (pID: string) => {
+  const handleRemoveItem = async (productId: string) => {
     if (!confirm('이 상품을 장바구니에서 삭제하시겠습니까?')) return;
     if (!token) {
       alert("로그인이 필요합니다.");
@@ -79,17 +66,12 @@ const CartPage = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:8080/api/v1/cart/${pID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axiosInstance.delete(`/api/v1/cart/${productId}`);
       fetchCart();
     } catch (err: any) {
       console.error("Error removing item:", err);
-      if (err.response?.status === 401) {
-        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-      } else {
+      // 401 에러는 axios interceptor에서 처리됨
+      if (err.response?.status !== 401) {
         alert("상품 삭제에 실패했습니다.");
       }
     }
@@ -150,22 +132,22 @@ const CartPage = () => {
         <div className="cart-content">
           <div className="cart-items">
             {cart.items.map((item: CartItem) => (
-              <div key={item.pID} className="cart-item">
-                <Link to={`/products/${item.pID}`} className="cart-item__image">
-                  <img src={item.imageUrl} alt={item.pname} />
+              <div key={item.productId} className="cart-item">
+                <Link to={`/products/${item.productId}`} className="cart-item__image">
+                  <img src={getImageUrl(item.imageUrl)} alt={item.productName} />
                 </Link>
 
                 <div className="cart-item__info">
-                  <Link to={`/products/${item.pID}`} className="cart-item__name">
-                    {item.pname}
+                  <Link to={`/products/${item.productId}`} className="cart-item__name">
+                    {item.productName}
                   </Link>
-                  <p className="cart-item__price">{item.pprice.toLocaleString()}원</p>
+                  <p className="cart-item__price">{item.productPrice.toLocaleString()}원</p>
                 </div>
 
                 <div className="cart-item__quantity">
                   <button
                     className="quantity-btn quantity-btn--minus"
-                    onClick={() => handleUpdateQuantity(item.pID, item.amount - 1)}
+                    onClick={() => handleUpdateQuantity(item.productId, item.amount - 1)}
                     disabled={item.amount <= 1}
                     title="수량 감소"
                   >
@@ -176,7 +158,7 @@ const CartPage = () => {
                   <span className="quantity-value">{item.amount}</span>
                   <button
                     className="quantity-btn quantity-btn--plus"
-                    onClick={() => handleUpdateQuantity(item.pID, item.amount + 1)}
+                    onClick={() => handleUpdateQuantity(item.productId, item.amount + 1)}
                     title="수량 증가"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
@@ -192,7 +174,7 @@ const CartPage = () => {
 
                 <button
                   className="cart-item__remove"
-                  onClick={() => handleRemoveItem(item.pID)}
+                  onClick={() => handleRemoveItem(item.productId)}
                   title="장바구니에서 삭제"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">

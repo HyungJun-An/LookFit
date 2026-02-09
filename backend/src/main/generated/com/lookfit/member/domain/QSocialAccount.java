@@ -32,7 +32,7 @@ public class QSocialAccount extends EntityPathBase<SocialAccount> {
 
     public final StringPath providerUserId = createString("providerUserId");
 
-    public final NumberPath<Integer> socialId = createNumber("socialId", Integer.class);
+    public final NumberPath<Long> socialId = createNumber("socialId", Long.class);
 
     public QSocialAccount(String variable) {
         this(SocialAccount.class, forVariable(variable), INITS);

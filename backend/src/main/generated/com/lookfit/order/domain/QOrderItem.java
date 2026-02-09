@@ -30,13 +30,13 @@ public class QOrderItem extends EntityPathBase<OrderItem> {
 
     public final NumberPath<Integer> orderno = createNumber("orderno", Integer.class);
 
-    public final StringPath pID = createString("pID");
-
-    public final StringPath pname = createString("pname");
-
-    public final NumberPath<java.math.BigDecimal> pprice = createNumber("pprice", java.math.BigDecimal.class);
-
     public final com.lookfit.product.domain.QProduct product;
+
+    public final StringPath productId = createString("productId");
+
+    public final StringPath productName = createString("productName");
+
+    public final NumberPath<java.math.BigDecimal> productPrice = createNumber("productPrice", java.math.BigDecimal.class);
 
     public final NumberPath<java.math.BigDecimal> subtotal = createNumber("subtotal", java.math.BigDecimal.class);
 

@@ -48,7 +48,7 @@ public class OrderService {
     @Transactional
     public OrderDto.DetailResponse createOrder(String memberId, OrderDto.CreateRequest request) {
         // 1. 장바구니 조회
-        List<Cart> cartItems = cartRepository.findByMemberid(memberId);
+        List<Cart> cartItems = cartRepository.findByMemberId(memberId);
         if (cartItems.isEmpty()) {
             throw new BusinessException(ErrorCode.CART_EMPTY);
         }
@@ -56,21 +56,21 @@ public class OrderService {
         // 2. 재고 확인 및 상품 정보 조회
         List<Product> products = new ArrayList<>();
         for (Cart cart : cartItems) {
-            Product product = productRepository.findById(cart.getPID())
+            Product product = productRepository.findById(cart.getProductId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND,
-                            "상품을 찾을 수 없습니다: " + cart.getPID()));
+                            "상품을 찾을 수 없습니다: " + cart.getProductId()));
 
-            if (product.getPstock() < cart.getAmount()) {
+            if (product.getProductStock() < cart.getAmount()) {
                 throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK,
-                        "재고가 부족합니다: " + product.getPname() +
-                        " (재고: " + product.getPstock() + ", 요청: " + cart.getAmount() + ")");
+                        "재고가 부족합니다: " + product.getProductName() +
+                        " (재고: " + product.getProductStock() + ", 요청: " + cart.getAmount() + ")");
             }
             products.add(product);
         }
 
         // 3. 총 금액 계산
         BigDecimal totalPrice = cartItems.stream()
-                .map(cart -> cart.getPprice().multiply(BigDecimal.valueOf(cart.getAmount())))
+                .map(cart -> cart.getProductPrice().multiply(BigDecimal.valueOf(cart.getAmount())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // 4. 주문 생성
@@ -92,13 +92,13 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         for (int i = 0; i < cartItems.size(); i++) {
             Cart cart = cartItems.get(i);
-            BigDecimal subtotal = cart.getPprice().multiply(BigDecimal.valueOf(cart.getAmount()));
+            BigDecimal subtotal = cart.getProductPrice().multiply(BigDecimal.valueOf(cart.getAmount()));
 
             OrderItem orderItem = OrderItem.builder()
                     .orderno(savedBuy.getOrderno())
-                    .pID(cart.getPID())
-                    .pname(cart.getPname())
-                    .pprice(cart.getPprice())
+                    .productId(cart.getProductId())
+                    .productName(cart.getProductName())
+                    .productPrice(cart.getProductPrice())
                     .amount(cart.getAmount())
                     .subtotal(subtotal)
                     .build();
@@ -110,10 +110,10 @@ public class OrderService {
         for (int i = 0; i < cartItems.size(); i++) {
             Cart cart = cartItems.get(i);
             Product product = products.get(i);
-            product.setPstock(product.getPstock() - cart.getAmount());
+            product.setProductStock(product.getProductStock() - cart.getAmount());
             productRepository.save(product);
             log.debug("재고 차감 - 상품: {}, 차감수량: {}, 남은재고: {}",
-                    product.getPID(), cart.getAmount(), product.getPstock());
+                    product.getProductId(), cart.getAmount(), product.getProductStock());
         }
 
         // 7. 장바구니 비우기
