@@ -3,7 +3,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
+  position: relative;
 }
 
 .main-content {
@@ -11,7 +13,9 @@
   padding: var(--space-6) 0;
   min-height: calc(100vh - 80px);
   width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* Mobile Responsive */

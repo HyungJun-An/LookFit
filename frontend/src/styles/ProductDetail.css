@@ -387,6 +387,13 @@
   line-height: var(--leading-relaxed);
 }
 
+/* Reviews Wrapper - placed below the product detail grid */
+.product-detail-reviews-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6) var(--space-12);
+}
+
 /* Reviews Section (placeholder) */
 .product-reviews {
   margin-top: var(--space-12);

@@ -34,6 +34,11 @@ public enum ErrorCode {
     INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "INSUFFICIENT_STOCK", "재고가 부족합니다"),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다"),
 
+    // Review
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_NOT_FOUND", "리뷰를 찾을 수 없습니다"),
+    REVIEW_NOT_PURCHASED(HttpStatus.FORBIDDEN, "REVIEW_NOT_PURCHASED", "구매한 상품만 리뷰를 작성할 수 있습니다"),
+    REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_ALREADY_EXISTS", "이미 해당 상품에 리뷰를 작성했습니다"),
+
     // Fitting
     FITTING_NOT_FOUND(HttpStatus.NOT_FOUND, "FITTING_NOT_FOUND", "가상 피팅을 찾을 수 없습니다"),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "INVALID_INPUT_VALUE", "잘못된 입력 값입니다"),

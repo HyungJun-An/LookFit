@@ -4,6 +4,7 @@ import axiosInstance from '../api/axiosInstance';
 import { getImageUrl } from '../utils/imageUtils';
 import type { Product } from '../types/product';
 import { useAuth } from '../context/AuthContext';
+import ReviewList from './ReviewList';
 import '../styles/ProductDetail.css';
 
 const ProductDetail = () => {
@@ -211,6 +212,7 @@ const ProductDetail = () => {
   }
 
   return (
+    <>
     <div className="product-detail">
       {/* Image Gallery */}
       <div className="product-detail__gallery">
@@ -374,6 +376,12 @@ const ProductDetail = () => {
         </div>
       </div>
     </div>
+
+    {/* Review Section - below the product detail grid */}
+    <div className="product-detail-reviews-wrapper">
+      <ReviewList productId={productId!} />
+    </div>
+    </>
   );
 };
 

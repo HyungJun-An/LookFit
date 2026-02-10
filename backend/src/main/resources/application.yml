@@ -42,9 +42,3 @@ fitting:
   image:
     upload-dir: src/main/resources/static/images/fitting/user
     result-dir: src/main/resources/static/images/fitting/result
-
-# Google Gemini API Configuration (Virtual Try-On)
-gemini:
-  api:
-    key: ${GOOGLE_API_KEY:}
-  model: gemini-2.5-flash-image  # 최신 이미지 생성 모델

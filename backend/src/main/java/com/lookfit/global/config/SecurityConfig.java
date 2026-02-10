@@ -79,6 +79,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/search/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
+                        // Review API (write/edit/delete require auth, read is public via products)
+                        .requestMatchers("/api/v1/reviews/**").authenticated()
+
                         // Protected API endpoints (authentication required)
                         .requestMatchers("/api/v1/cart/**").authenticated()
                         .requestMatchers("/api/v1/wishlist/**").authenticated()

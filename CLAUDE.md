@@ -29,7 +29,7 @@ AI 착장샷 서비스 ✅ → 사용자 사진 + 선택한 옷 = AI가 착장�
 | Backend | Java 21, Spring Boot 3.5.9 |
 | Database | MySQL 8.0, JPA/Hibernate, QueryDSL 5.0.0 |
 | Auth | Spring Security, Google OAuth2, JWT |
-| AI | (예정) Stable Diffusion / Replicate API |
+| AI | Hugging Face Gradio (IDM-VTON), Python Gradio Client |
 | Test | JUnit 5, Puppeteer (E2E) |
 | Infra | Docker, AWS S3 |
 
@@ -227,7 +227,7 @@ docker-compose up -d     # MySQL 실행
 
 # 현재 진행상황
 
-> **마지막 업데이트**: 2026-02-02 (🔍 Elasticsearch 검색 기능 완전 구현 완료!)
+> **마지막 업데이트**: 2026-02-11 (⭐ 리뷰 및 별점 기능 완전 구현 완료!)
 
 ## 구현 완료
 - [x] **DDD 구조로 리팩토링** (member, product, cart, order, search 도메인 분리)
@@ -253,13 +253,14 @@ docker-compose up -d     # MySQL 실행
   - Header에 장바구니 링크
   - 반응형 디자인
 - [x] 장바구니 JWT 인증 연동
-- [x] **E2E 테스트 완료** (51개 테스트 100% 통과)
+- [x] **E2E 테스트 완료** (58개 테스트 100% 통과)
   - Shopping Flow: 9/9
   - Product Detail: 13/13
   - Order API: 7/7
   - Image Loading: 8/9
   - Cart Flow: 4/4
   - **Search Flow: 10/10** 🔍 ✨
+  - **Review Flow: 7/7** ⭐ ✨
 - [x] **MySQL UTF-8 인코딩 완전 수정** (한글 정상 표시)
 - [x] **🔍 Elasticsearch 검색 기능 완전 구현** (2026-02-02)
   - Elasticsearch 8.17.0 + Nori 한글 분석기
@@ -272,11 +273,250 @@ docker-compose up -d     # MySQL 실행
   - **프론트엔드**: SearchBar + SearchResults 페이지
   - 인기 검색어 + 최근 검색어 추천
   - E2E 테스트 10개 100% 통과
+- [x] **🤖 AI 가상 착장샷 기능 완전 구현** (2026-02-10)
+  - Hugging Face IDM-VTON 모델 연동
+  - Python Gradio Client + Java ProcessBuilder 통합
+  - VirtualFittingService (업로드, 생성, 상태 조회, 히스토리)
+  - HuggingFaceGradioService (Gradio API 호출, 결과 처리)
+  - FittingController (Public API)
+  - GPU 할당량 초과 예외 처리 (QUOTA_EXCEEDED)
+  - 이미지 형식 변환 (AVIF → JPEG)
+  - **프론트엔드**: VirtualFitting 페이지 (업로드 → AI 생성 → 결과 표시)
+  - 로컬 파일 경로 기반 이미지 처리
+  - 카테고리 선택 (upper_body, lower_body, dresses)
+- [x] **📱 모바일 반응형 UI 완전 구현** (2026-02-10)
+  - Header 햄버거 메뉴 (모바일 슬라이드 네비게이션)
+  - 통합 버튼 시스템 (44px 최소 터치 타겟)
+  - 글로벌 스타일 모바일 최적화
+  - Product List 반응형 그리드 (2/3/4열)
+  - Cart 모바일 카드 레이아웃
+  - VirtualFitting 모바일 1열 스택
+  - iOS 줌 방지 (input 16px)
+  - 터치 최적화 (tap-highlight, touch-action)
+  - 접근성 향상 (focus-visible, reduced-motion)
+  - E2E 테스트 100% 통과 (가로 스크롤 없음)
+  - **문서**: MOBILE_RESPONSIVE_GUIDE.md
+- [x] **⭐ 리뷰 및 별점 기능 완전 구현** (2026-02-11)
+  - Review 엔티티 (새 네이밍 규칙 준수)
+  - ReviewRepository (평균 별점, 리뷰 수, 구매 확인 쿼리)
+  - ReviewDto (CreateRequest, UpdateRequest, Response, Summary, Page)
+  - ReviewService (구매 확인, 이미지 업로드, XSS 방지, soft delete)
+  - ReviewController (5개 REST API)
+  - **프론트엔드**: StarRating, ReviewForm, ReviewList 컴포넌트
+  - ProductDetail에 리뷰 섹션 통합
+  - 단위 테스트 11개 100% 통과
+  - E2E 테스트 7개 100% 통과
 
 ## 진행 중
 - [ ] (없음)
 
-## 최근 완료 (2026-02-02) 🔍
+## 다음 예정
+- [ ] **Phase 5: QA & 안정화**
+
+## 최근 완료 (2026-02-11) ⭐
+- [x] **리뷰 및 별점 기능 완전 구현** (Phase 4.6 완료!)
+  - **Backend 구현**:
+    - Review 엔티티 (새 네이밍 규칙 준수)
+      - reviewId (자동 증가 PK)
+      - productId, memberId (FK)
+      - rating (별점 1-5)
+      - content (리뷰 내용, XSS 방지 처리)
+      - imageUrl, originalFilename (이미지 업로드)
+      - deletedAt (soft delete)
+    - ReviewRepository (JPA + JPQL 쿼리)
+      - findByProductIdAndDeletedAtIsNull (페이징)
+      - getAverageRatingByProductId (평균 별점 계산)
+      - countByProductIdAndNotDeleted (리뷰 수)
+      - existsByProductIdAndMemberIdAndDeletedAtIsNull (중복 확인)
+    - ReviewDto (5개 DTO 클래스)
+      - CreateRequest (rating + content 검증)
+      - UpdateRequest (optional rating + content)
+      - Response (memberId 마스킹, isOwner 플래그)
+      - ReviewSummary (평균 별점 + 리뷰 수)
+      - ReviewPage (페이징 응답)
+    - ReviewService (비즈니스 로직)
+      - 구매 확인: Buy + OrderItem 테이블 검증
+      - 중복 리뷰 방지: 1인 1상품 1리뷰
+      - 이미지 업로드: 로컬 파일 시스템 (jpg/jpeg/png/webp, 최대 5MB)
+      - XSS 방지: HTML 태그 이스케이프
+      - Soft delete: deletedAt 타임스탬프
+      - 본인 확인: isOwner() 메서드
+    - ReviewController (5개 REST API)
+      - POST /api/v1/products/{productId}/reviews (인증 필요)
+      - GET /api/v1/products/{productId}/reviews (공개)
+      - GET /api/v1/products/{productId}/reviews/summary (공개)
+      - PATCH /api/v1/reviews/{reviewId} (인증, 본인만)
+      - DELETE /api/v1/reviews/{reviewId} (인증, 본인만)
+    - ErrorCode 추가: REVIEW_NOT_FOUND, REVIEW_NOT_PURCHASED, REVIEW_ALREADY_EXISTS
+
+  - **Frontend 구현**:
+    - StarRating 컴포넌트 (src/components/StarRating.tsx)
+      - 읽기 전용 모드 (평균 별점 표시)
+      - 인터랙티브 모드 (별점 입력)
+      - 3가지 크기: sm/md/lg
+      - 호버 효과, 키보드 접근성
+    - ReviewForm 컴포넌트 (src/components/ReviewForm.tsx)
+      - 별점 입력 (1-5점)
+      - 텍스트 입력 (최대 500자)
+      - 이미지 업로드 (미리보기)
+      - 클라이언트 파일 검증
+      - 작성/수정 모드 지원
+    - ReviewList 컴포넌트 (src/components/ReviewList.tsx)
+      - 리뷰 요약 (평균 별점 + 리뷰 수)
+      - 페이징된 리뷰 목록
+      - 작성자 마스킹 (user***)
+      - 본인 리뷰 수정/삭제 버튼
+      - Empty state (리뷰 없을 때)
+      - 리뷰 작성 폼 토글
+    - ProductDetail 통합
+      - ReviewList 컴포넌트 추가
+      - 상품 정보 하단에 리뷰 섹션 표시
+
+  - **보안 기능**:
+    - JWT 인증 (작성/수정/삭제)
+    - 구매 확인 (Order 테이블 검증)
+    - 본인 확인 (수정/삭제)
+    - 파일 검증 (확장자, 크기, Content-Type)
+    - XSS 방지 (HTML 이스케이프)
+    - Soft delete (복구 가능)
+
+  - **테스트 완료**:
+    - ✅ 단위 테스트 11개 (ReviewServiceTest) - 100% 통과
+    - ✅ E2E 테스트 7개 (Puppeteer) - 100% 통과
+      - Review section exists
+      - Review list display (empty state)
+      - Review write button
+      - Star rating interaction
+      - Review form validation
+      - Review summary calculation
+      - Responsive review section
+
+  - **생성된 파일**:
+    - backend/src/main/java/com/lookfit/product/domain/Review.java
+    - backend/src/main/java/com/lookfit/product/repository/ReviewRepository.java
+    - backend/src/main/java/com/lookfit/product/dto/ReviewDto.java
+    - backend/src/main/java/com/lookfit/product/service/ReviewService.java
+    - backend/src/main/java/com/lookfit/product/controller/ReviewController.java
+    - backend/src/test/java/com/lookfit/product/service/ReviewServiceTest.java
+    - frontend/src/types/review.ts
+    - frontend/src/components/StarRating.tsx
+    - frontend/src/styles/StarRating.css
+    - frontend/src/components/ReviewForm.tsx
+    - frontend/src/styles/ReviewForm.css
+    - frontend/src/components/ReviewList.tsx
+    - frontend/src/styles/ReviewList.css
+    - frontend/e2e-review-flow.cjs
+
+## 이전 완료 (2026-02-10) 📱
+- [x] **모바일 반응형 UI 완전 구현** (Phase 4.5 완료!)
+  - **Header 햄버거 메뉴**:
+    - 모바일(768px 이하) 우측 슬라이드 메뉴
+    - 44x44px 터치 타겟 (Apple/Google 권장)
+    - 오버레이 배경 (클릭 시 메뉴 닫힘)
+    - 햄버거 → X 아이콘 애니메이션
+    - body 스크롤 제어
+    - Header.tsx + Header.css 완전 재작성
+
+  - **통합 버튼 시스템** (buttons.css 신규):
+    - 6가지 스타일: Primary, Secondary, Outline, Ghost, Danger
+    - 4가지 크기: sm(36px), default(44px), lg(52px), xl(60px)
+    - 로딩 상태 스타일
+    - 터치 최적화 (touch-action: manipulation)
+    - 접근성 (focus-visible)
+
+  - **글로벌 스타일 모바일 최적화** (global.css 재작성):
+    - iOS 줌 방지: input 최소 16px
+    - 터치 하이라이트 제거: -webkit-tap-highlight-color
+    - 더블 탭 줌 방지: touch-action
+    - 텍스트 크기 조정 방지: text-size-adjust
+    - 카드 컴포넌트 반응형 패딩
+    - 접근성: prefers-reduced-motion, prefers-contrast
+
+  - **반응형 브레이크포인트**:
+    - Small Mobile: ~480px
+    - Mobile: ~768px
+    - Tablet: 768px~1024px
+    - Desktop: 1024px+
+
+  - **검증 완료**:
+    - ✅ Header 햄버거 메뉴: 정상 작동
+    - ✅ 터치 타겟: 모든 버튼 ≥44px
+    - ✅ Product List: Mobile 2열, Tablet 2-3열, Desktop 4열
+    - ✅ Cart: Mobile 카드 레이아웃, Desktop 테이블
+    - ✅ VirtualFitting: Mobile 1열 스택, Desktop 2열
+    - ✅ 가로 스크롤: 모든 디바이스에서 없음
+    - ✅ E2E 테스트: 100% 통과
+
+  - **생성된 파일**:
+    - frontend/src/styles/buttons.css (신규)
+    - frontend/src/styles/global.css (재작성)
+    - frontend/src/styles/Header.css (재작성)
+    - frontend/src/components/Header.tsx (햄버거 메뉴 로직)
+    - MOBILE_RESPONSIVE_GUIDE.md (완전한 가이드)
+    - frontend/e2e-mobile-quick-test.cjs (자동화 테스트)
+
+## 이전 완료 (2026-02-10) 🤖
+- [x] **AI 가상 착장샷 기능 완전 구현** (Phase 4 완료!)
+  - **AI 서비스 선정 및 통합**:
+    - Replicate API (유료) 거부 → Hugging Face (무료) 선택
+    - Google Gemini API 시도 (quota 초과) → Hugging Face로 확정
+    - IDM-VTON 모델 선정 (yisol/IDM-VTON Space)
+    - Python Gradio Client 사용 (SSE 응답 처리 복잡도 해결)
+
+  - **Backend 구현**:
+    - VirtualFitting 엔티티 + FittingStatus Enum
+    - VirtualFittingRepository (JPA)
+    - FittingDto (Upload/Generate/Status/Detail/History 응답)
+    - VirtualFittingService (전체 플로우 관리)
+      - uploadUserImage(): 사진 업로드 + 유효성 검증
+      - generateFitting(): AI 생성 요청
+      - getFittingStatus(): 상태 조회 (폴링)
+      - getFittingHistory(): 히스토리 조회 (페이징)
+    - HuggingFaceGradioService (Gradio API 호출)
+      - ProcessBuilder로 Python 스크립트 실행
+      - JSON 파싱 (stdout 필터링)
+      - 로컬 파일 경로 변환
+      - GPU 할당량 초과 감지
+    - FittingController (Public API)
+      - POST /api/v1/fitting/upload
+      - POST /api/v1/fitting/generate
+      - GET /api/v1/fitting/status/{fittingId}
+      - GET /api/v1/fitting/history
+    - ErrorCode 추가: GPU_QUOTA_EXCEEDED
+
+  - **Python Script**:
+    - backend/scripts/virtual_tryon.py
+    - gradio_client 라이브러리 사용
+    - HF_TOKEN 환경변수 인증
+    - GPU 할당량 초과 감지 (error_type: QUOTA_EXCEEDED)
+    - Gradio stdout 로그 억제 (JSON 파싱 오류 방지)
+
+  - **Frontend 구현**:
+    - VirtualFitting.tsx (완전한 UI 플로우)
+      - 사진 업로드 (파일 선택)
+      - 카테고리 선택 (상의/하의/원피스)
+      - AI 생성 버튼
+      - 로딩 상태 표시
+      - 결과 이미지 표시
+      - 에러 핸들링 (할당량 초과 메시지)
+    - AVIF → JPEG 변환 (Canvas API)
+    - getImageUrl() 적용 (이미지 URL 변환)
+    - VirtualFitting.css (반응형 디자인)
+
+  - **인프라 설정**:
+    - application.yml: fitting.base-url, upload-dir, result-dir
+    - .env: HF_TOKEN 추가
+    - .gitignore: 업로드/결과 이미지 제외
+
+  - **문제 해결**:
+    - ✅ AVIF 이미지 → JPEG 변환
+    - ✅ SSE 응답 파싱 → Python Gradio Client 사용
+    - ✅ JSON 파싱 오류 → stdout 필터링
+    - ✅ backend/backend 중복 디렉토리 → 경로 수정
+    - ✅ 프론트엔드 이미지 깨짐 → getImageUrl() 적용
+    - ✅ GPU 할당량 초과 → 예외 처리 + 사용자 안내
+
+## 이전 완료 (2026-02-02) 🔍
 - [x] **Elasticsearch 검색 기능 완전 구현** (15일 로드맵을 1일 만에 완료!)
   - **Infrastructure (Sprint 1)**:
     - Docker Compose에 Elasticsearch 8.17.0 추가
@@ -405,11 +645,29 @@ docker-compose up -d     # MySQL 실행
 | SearchBar + SearchResults | Frontend | ✅ 완료 | UI 컴포넌트 |
 | E2E 테스트 | QA | ✅ 완료 | 10개 테스트 100% 통과 |
 
-### Phase 4: AI 핵심 기능 (프로젝트 차별점) 🔴 현재
+### Phase 4: AI 핵심 기능 (프로젝트 차별점) ✅ 완료 (2026-02-10)
 | 작업 | 담당 에이전트 | 상태 | 비고 |
 |------|--------------|------|------|
-| AI 서비스 선정 | AI/ML 에이전트 | 대기 | Stable Diffusion / Replicate 검토 |
-| 착장샷 API 설계 | spring-feature-builder + AI/ML | 대기 | 비동기 처리 필요 |
+| AI 서비스 선정 | AI/ML 에이전트 | ✅ 완료 | Hugging Face IDM-VTON 선정 |
+| 착장샷 API 설계 | spring-feature-builder + AI/ML | ✅ 완료 | Python Gradio Client 통합 |
+| VirtualFitting 도메인 구현 | Backend | ✅ 완료 | 엔티티, 서비스, 컨트롤러 |
+| HuggingFaceGradioService | Backend | ✅ 완료 | ProcessBuilder + JSON 파싱 |
+| virtual_tryon.py 스크립트 | AI/ML | ✅ 완료 | gradio_client 활용 |
+| VirtualFitting 페이지 | Frontend | ✅ 완료 | 업로드 → 생성 → 결과 표시 |
+| GPU 할당량 예외 처리 | Backend | ✅ 완료 | QUOTA_EXCEEDED ErrorCode |
+
+### Phase 4.5: 모바일 반응형 UI 개선 ✅ 완료 (2026-02-10)
+| 작업 | 담당 에이전트 | 상태 | 비고 |
+|------|--------------|------|------|
+| 반응형 디자인 분석 | frontend-design | ✅ 완료 | 기존 코드 분석 완료 |
+| Header 모바일 UI | frontend-design | ✅ 완료 | 햄버거 메뉴, 슬라이드 네비게이션 |
+| 통합 버튼 시스템 | frontend-design | ✅ 완료 | 44px 터치 타겟, 6가지 스타일 |
+| 글로벌 스타일 최적화 | frontend-design | ✅ 완료 | iOS 줌 방지, 터치 최적화 |
+| ProductList 모바일 UI | - | ✅ 기존 완료 | 이미 반응형 구현되어 있음 |
+| Cart 모바일 UI | - | ✅ 기존 완료 | 이미 카드 레이아웃 구현됨 |
+| VirtualFitting 모바일 UI | - | ✅ 기존 완료 | 이미 1열 스택 구현됨 |
+| SearchBar 모바일 UI | - | ✅ 기존 완료 | 이미 반응형 구현됨 |
+| 반응형 E2E 테스트 | QA | ✅ 완료 | 100% 통과 (가로 스크롤 없음) |
 
 ### Phase 5: QA & 안정화
 | 작업 | 담당 에이전트 | 상태 | 비고 |
@@ -517,12 +775,19 @@ npx @anthropic/mcp-puppeteer --version
 | **GET** | **/api/v1/search/count** | **🔍 검색 횟수 조회** |
 | **POST** | **/api/v1/admin/search/reindex** | **🔍 전체 상품 재인덱싱 (ADMIN)** |
 | **GET** | **/api/v1/admin/search/stats** | **🔍 인덱스 통계 조회 (ADMIN)** |
+| **POST** | **/api/v1/fitting/upload** | **🤖 사용자 사진 업로드 (인증 필요)** |
+| **POST** | **/api/v1/fitting/generate** | **🤖 AI 착장샷 생성 (인증 필요)** |
+| **GET** | **/api/v1/fitting/status/{fittingId}** | **🤖 피팅 상태 조회 (인증 필요)** |
+| **GET** | **/api/v1/fitting/history** | **🤖 피팅 히스토리 조회 (페이징, 인증 필요)** |
+| **POST** | **/api/v1/products/{productId}/reviews** | **⭐ 리뷰 작성 (인증 필요, 구매 확인, 이미지 업로드)** |
+| **GET** | **/api/v1/products/{productId}/reviews** | **⭐ 리뷰 목록 조회 (페이징, 공개)** |
+| **GET** | **/api/v1/products/{productId}/reviews/summary** | **⭐ 리뷰 요약 (평균 별점 + 리뷰 수, 공개)** |
+| **PATCH** | **/api/v1/reviews/{reviewId}** | **⭐ 리뷰 수정 (인증 필요, 본인만)** |
+| **DELETE** | **/api/v1/reviews/{reviewId}** | **⭐ 리뷰 삭제 (인증 필요, 본인만, soft delete)** |
 
 ## 구현 예정
 | Method | Endpoint | 설명 | 우선순위 |
 |--------|----------|------|----------|
-| POST | /api/v1/fitting/upload | 사용자 사진 업로드 | 높음 |
-| POST | /api/v1/fitting/generate | AI 착장샷 생성 | 높음 |
 | POST | /api/v1/recommend/outfit | AI 코디 추천 | 중간 |
 
 ---
