@@ -30,18 +30,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = resolveToken(request);
 
-        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-            String memberId = jwtTokenProvider.getMemberId(token);
-            String role = jwtTokenProvider.getRole(token);
+        if (StringUtils.hasText(token)) {
+            // 테스트용 고정 토큰 체크
+            if ("test_token_fitting".equals(token)) {
+                logger.warn("⚠️ 테스트용 고정 토큰 사용 - memberId: google_11510");
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                "google_11510",
+                                null,
+                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                        );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            // 실제 JWT 토큰 검증
+            else if (jwtTokenProvider.validateToken(token)) {
+                String memberId = jwtTokenProvider.getMemberId(token);
+                String role = jwtTokenProvider.getRole(token);
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            memberId,
-                            null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                memberId,
+                                null,
+                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                        );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         filterChain.doFilter(request, response);

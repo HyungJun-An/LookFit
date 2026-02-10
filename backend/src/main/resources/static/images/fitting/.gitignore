@@ -1,0 +1,8 @@
+# Ignore all images
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# But keep .gitkeep files
+!.gitkeep

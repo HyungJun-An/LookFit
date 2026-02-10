@@ -28,9 +28,8 @@ const ProductDetail = () => {
         const response = await axiosInstance.get(`/api/v1/products/${productId}`);
         setProduct(response.data);
 
-        // Set main image (use first image from gallery or placeholder)
-        const imageUrl = response.data.images?.[0] ||
-                        `https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&h=1000&fit=crop`;
+        // Set main image using imageUtils
+        const imageUrl = getImageUrl(response.data.imageUrl);
         setMainImage(imageUrl);
 
         setError(null);
@@ -211,15 +210,6 @@ const ProductDetail = () => {
     );
   }
 
-  // Mock images if not available
-  const productImages = product.images && product.images.length > 0
-    ? product.images
-    : [
-        `https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&h=1000&fit=crop`,
-        `https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=800&h=1000&fit=crop`,
-        `https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&h=1000&fit=crop`
-      ];
-
   return (
     <div className="product-detail">
       {/* Image Gallery */}
@@ -227,19 +217,6 @@ const ProductDetail = () => {
         <div className="main-image">
           <img src={mainImage} alt={product.productName} />
         </div>
-        {productImages.length > 1 && (
-          <div className="thumbnail-list">
-            {productImages.map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                alt={`${product.productName} ${index + 1}`}
-                className={mainImage === img ? 'active' : ''}
-                onClick={() => setMainImage(img)}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Product Info */}

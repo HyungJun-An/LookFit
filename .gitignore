@@ -1,15 +1,165 @@
-# MCP 설정 (토큰 포함)
+# ====================
+# Environment & Secrets
+# ====================
+.env
+.env.local
+.env.*.local
 .mcp.json
 
-# OS
-.DS_Store
+# API Keys (안전을 위해 명시)
+**/GOOGLE_API_KEY*
+**/HF_TOKEN*
+**/REPLICATE_API_KEY*
 
+# ====================
+# OS
+# ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ====================
 # IDE
+# ====================
+# IntelliJ IDEA
 .idea/
 *.iml
-.vscode/
+*.iws
+*.ipr
+out/
 
+# VSCode
+.vscode/
+*.code-workspace
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# ====================
+# Backend (Spring Boot + Gradle)
+# ====================
 # Gradle
 .gradle/
 build/
-./scripts/**
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# QueryDSL 생성 파일
+**/generated/
+src/main/generated/
+
+# Compiled class files
+*.class
+*.jar
+*.war
+*.ear
+!gradle-wrapper.jar
+
+# Log files
+*.log
+backend.log
+nohup.out
+logs/
+
+# ====================
+# Frontend (React + Vite)
+# ====================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Vite
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ====================
+# Python (Virtual Try-On Script)
+# ====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ====================
+# Uploaded Images & User Data
+# ====================
+# Virtual Fitting 업로드 이미지 (용량 큼, Git에 불필요)
+backend/src/main/resources/static/images/fitting/user/**
+!backend/src/main/resources/static/images/fitting/user/.gitkeep
+
+# Virtual Fitting AI 생성 결과 이미지
+backend/src/main/resources/static/images/fitting/result/**
+!backend/src/main/resources/static/images/fitting/result/.gitkeep
+
+# 임시 업로드 파일
+/tmp/
+*.tmp
+*.temp
+
+# ====================
+# Database
+# ====================
+*.db
+*.sqlite
+*.sqlite3
+
+# ====================
+# Docker
+# ====================
+*.env.docker
+docker-compose.override.yml
+
+# ====================
+# Test
+# ====================
+/coverage/
+*.lcov
+.nyc_output/
+
+# ====================
+# Misc
+# ====================
+# Mac Finder
+.AppleDouble
+.LSOverride
+
+# Windows
+desktop.ini
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Test scripts
+test-*.sh
+!e2e-*.js
+
+# Documentation (optional, 프로젝트에 따라 조정)
+# *.md

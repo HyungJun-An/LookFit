@@ -5,7 +5,8 @@ import ProductDetail from './components/ProductDetail';
 import Cart from './components/Cart';
 import Login from './components/Login';
 import LoginSuccess from './components/LoginSuccess';
-import VirtualFitting from './components/VirtualFitting';
+import VirtualFitting from './pages/VirtualFitting';
+import FittingHistory from './pages/FittingHistory';
 import SearchResults from './pages/SearchResults';
 import Wishlist from './pages/Wishlist';
 import Signup from './pages/Signup';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/fitting" element={<VirtualFitting />} />
+          <Route path="/fitting/history" element={<FittingHistory />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

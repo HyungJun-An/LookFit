@@ -55,8 +55,8 @@ public class CartService {
             throw new BusinessException(ErrorCode.PRODUCT_OUT_OF_STOCK);
         }
 
-        // Get product image URL (placeholder for now)
-        String imageUrl = "https://via.placeholder.com/400x533?text=" + product.getProductName();
+        // Get product image URL from product
+        String imageUrl = product.getImageUrl(); // Product 엔티티의 imageUrl 필드
 
         Cart cart = cartRepository.findByMemberIdAndProductId(memberId, request.getProductId())
                 .map(existingCart -> {

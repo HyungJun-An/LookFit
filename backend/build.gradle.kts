@@ -69,7 +69,10 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok")
     implementation("org.modelmapper:modelmapper:3.2.0") // DTO 변환용 추천
 
-    // 11. Test
+    // 11. AI - Google Gemini (Virtual Try-On)
+    implementation("com.google.genai:google-genai:1.36.0")
+
+    // 12. Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("com.h2database:h2")

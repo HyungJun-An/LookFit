@@ -32,7 +32,14 @@ public enum ErrorCode {
     // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없습니다"),
     INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "INSUFFICIENT_STOCK", "재고가 부족합니다"),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다");
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다"),
+
+    // Fitting
+    FITTING_NOT_FOUND(HttpStatus.NOT_FOUND, "FITTING_NOT_FOUND", "가상 피팅을 찾을 수 없습니다"),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "INVALID_INPUT_VALUE", "잘못된 입력 값입니다"),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_UPLOAD_FAILED", "파일 업로드에 실패했습니다"),
+    AI_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AI_GENERATION_FAILED", "AI 이미지 생성에 실패했습니다"),
+    GPU_QUOTA_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "GPU_QUOTA_EXCEEDED", "AI 서비스의 일일 할당량을 초과했습니다. 내일 다시 시도해주세요.");
 
     private final HttpStatus status;
     private final String code;
