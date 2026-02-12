@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -45,12 +44,10 @@ public class SearchController {
             @RequestParam(defaultValue = "false") boolean inStockOnly,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String memberId) {
 
         log.info("Search request: keyword={}, category={}, page={}, size={}, sort={}",
                 keyword, category, page, size, sort);
-
-        String memberId = userDetails != null ? userDetails.getUsername() : null;
 
         SearchDto.SearchRequest request = SearchDto.SearchRequest.builder()
                 .keyword(keyword)
@@ -77,9 +74,8 @@ public class SearchController {
      */
     @GetMapping("/suggestions")
     public ResponseEntity<SearchDto.SearchSuggestion> getSuggestions(
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String memberId) {
 
-        String memberId = userDetails != null ? userDetails.getUsername() : null;
         log.debug("Getting search suggestions for member: {}", memberId);
 
         SearchDto.SearchSuggestion suggestions = searchService.getSuggestions(memberId);
