@@ -92,13 +92,11 @@ const ReviewForm = ({ productId, existingReview, onSuccess, onCancel }: ReviewFo
       }
 
       if (isEditing && existingReview) {
-        await axiosInstance.patch(`/api/v1/reviews/${existingReview.reviewId}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        // axios가 FormData를 자동으로 감지하고 Content-Type 설정
+        await axiosInstance.patch(`/api/v1/reviews/${existingReview.reviewId}`, formData);
       } else {
-        await axiosInstance.post(`/api/v1/products/${productId}/reviews`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        // axios가 FormData를 자동으로 감지하고 Content-Type 설정
+        await axiosInstance.post(`/api/v1/products/${productId}/reviews`, formData);
       }
 
       onSuccess();
