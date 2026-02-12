@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/SearchBar.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
 interface PopularSearch {
   keyword: string;
   searchCount: number;
@@ -38,7 +40,7 @@ const SearchBar = () => {
       const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
       const response = await axios.get<SearchSuggestion>(
-        'http://localhost:8080/api/v1/search/suggestions',
+        `${API_BASE_URL}/api/v1/search/suggestions`,
         config
       );
       setSuggestions(response.data);

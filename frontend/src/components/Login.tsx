@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import '../styles/Login.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
 const Login = () => {
   const { memberId } = useAuth();
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const Login = () => {
 
   const handleGoogleLogin = () => {
     // 백엔드 OAuth2 엔드포인트로 리다이렉트
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -29,7 +31,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
         email,
         password,
       });
