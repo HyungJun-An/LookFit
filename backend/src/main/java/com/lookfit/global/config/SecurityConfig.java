@@ -45,7 +45,9 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",
             "http://localhost:3000",
-            "http://127.0.0.1:5173"
+            "http://127.0.0.1:5173",
+            "https://look-fit.vercel.app",  // Vercel 프로덕션
+            "https://ste-colleges-wires-saints.trycloudflare.com"  // Cloudflare Tunnel
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
@@ -75,12 +77,16 @@ public class SecurityConfig {
 
                         // Public API endpoints (no authentication required)
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/products/**").permitAll()
                         .requestMatchers("/api/v1/search/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
 
-                        // Review API (write/edit/delete require auth, read is public via products)
-                        .requestMatchers("/api/v1/reviews/**").authenticated()
+                        // Review API - 구체적인 경로를 먼저 매칭 (중요!)
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/products/*/reviews").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/v1/reviews/**").authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/reviews/**").authenticated()
+
+                        // Product API - 조회는 public, 리뷰 조회도 포함
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/products/**").permitAll()
 
                         // Protected API endpoints (authentication required)
                         .requestMatchers("/api/v1/cart/**").authenticated()
