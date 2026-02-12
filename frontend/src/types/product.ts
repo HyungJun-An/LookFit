@@ -18,6 +18,8 @@ export type Product = {
   description: string;
   productCompany: string;
   productStock: number;
+  imageUrl?: string;
+  thumbnailUrl?: string;
   images?: string[];
   sizes?: string[];
   colors?: string[];

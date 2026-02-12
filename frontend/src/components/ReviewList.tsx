@@ -16,7 +16,7 @@ const ReviewList = ({ productId }: ReviewListProps) => {
   const [summary, setSummary] = useState<ReviewSummary | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
+  const [_totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingReview, setEditingReview] = useState<Review | null>(null);

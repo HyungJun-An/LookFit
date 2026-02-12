@@ -128,7 +128,7 @@ const FittingHistoryPage = () => {
                 <div className="history-image">
                   {fitting.resultImageUrl ? (
                     <img
-                      src={fitting.resultImageUrl}
+                      src={getImageUrl(fitting.resultImageUrl)}
                       alt="AI 생성"
                     />
                   ) : (

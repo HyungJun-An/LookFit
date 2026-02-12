@@ -5,10 +5,10 @@ import axiosInstance from '../api/axiosInstance';
 import '../styles/SearchResults.css';
 
 interface Product {
-  pid: string;
-  pname: string;
-  pprice: number;
-  pcategory: string;
+  productId: string;
+  productName: string;
+  productPrice: number;
+  productCategory: string;
   imageUrl: string;
   relevanceScore: number;
 }
@@ -132,8 +132,8 @@ const SearchResults = () => {
         <div className="search-results__grid">
           {results.content.map((product) => (
             <Link
-              to={`/products/${product.pid}`}
-              key={product.pid}
+              to={`/products/${product.productId}`}
+              key={product.productId}
               className="product-card"
             >
               <img
