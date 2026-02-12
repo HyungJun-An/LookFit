@@ -21,8 +21,10 @@ const LoginSuccess = () => {
       // Update AuthContext (which also stores in localStorage)
       login(memberId, token);
 
-      // Redirect to home page immediately
-      navigate('/', { replace: true });
+      // Redirect to home page
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 1000);
     } else {
       // If no token/memberId, redirect to login
       navigate('/login', { replace: true });
