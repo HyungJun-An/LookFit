@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,10 +29,9 @@ public class ReviewController {
             @PathVariable String productId,
             @Valid @RequestPart("review") ReviewDto.CreateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String memberId) {
 
-        requireAuthentication(userDetails);
-        String memberId = userDetails.getUsername();
+        requireAuthentication(memberId);
         ReviewDto.Response response = reviewService.createReview(memberId, productId, request, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -47,9 +45,8 @@ public class ReviewController {
             @PathVariable String productId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String currentMemberId) {
 
-        String currentMemberId = userDetails != null ? userDetails.getUsername() : null;
         ReviewDto.ReviewPage response = reviewService.getReviews(productId, page, size, currentMemberId);
         return ResponseEntity.ok(response);
     }
@@ -74,10 +71,9 @@ public class ReviewController {
             @PathVariable Long reviewId,
             @Valid @RequestPart("review") ReviewDto.UpdateRequest request,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String memberId) {
 
-        requireAuthentication(userDetails);
-        String memberId = userDetails.getUsername();
+        requireAuthentication(memberId);
         ReviewDto.Response response = reviewService.updateReview(memberId, reviewId, request, image);
         return ResponseEntity.ok(response);
     }
@@ -89,20 +85,18 @@ public class ReviewController {
     @DeleteMapping("/api/v1/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Long reviewId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal String memberId) {
 
-        requireAuthentication(userDetails);
-        String memberId = userDetails.getUsername();
+        requireAuthentication(memberId);
         reviewService.deleteReview(memberId, reviewId);
         return ResponseEntity.noContent().build();
     }
 
     /**
      * 인증 필수 확인 헬퍼 메서드
-     * products/** 가 permitAll 이므로, 쓰기 작업에서 수동으로 인증 확인
      */
-    private void requireAuthentication(UserDetails userDetails) {
-        if (userDetails == null) {
+    private void requireAuthentication(String memberId) {
+        if (memberId == null || memberId.isEmpty()) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
     }
