@@ -31,3 +31,44 @@
     padding: var(--space-3) 0;
   }
 }
+
+/* ─────────────────────────────────────── */
+/* Custom Scrollbar (desktop only)         */
+/* ─────────────────────────────────────── */
+@media (min-width: 769px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-neutral-300);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neutral-400);
+  }
+}
+
+/* Firefox scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-300) var(--color-bg-secondary);
+}
+
+/* Enhanced Selection — 웜 톤 (overrides global.css default) */
+::selection {
+  background-color: var(--color-accent-warm-soft);
+  color: var(--color-accent-charcoal);
+}
+
+::-moz-selection {
+  background-color: var(--color-accent-warm-soft);
+  color: var(--color-accent-charcoal);
+}

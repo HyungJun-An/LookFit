@@ -37,13 +37,17 @@ public interface SearchLogRepository extends JpaRepository<SearchLog, Integer> {
      * @param limit 조회 개수
      * @return 최근 검색 키워드 리스트
      */
-    @Query("""
-        SELECT DISTINCT sl.keyword
-        FROM SearchLog sl
-        WHERE sl.memberid = :memberid
-        ORDER BY sl.searchedAt DESC
-        LIMIT :limit
-    """)
+    @Query(value = """
+        SELECT keyword
+        FROM (
+            SELECT keyword, MAX(searched_at) as latest_search
+            FROM search_log
+            WHERE memberid = :memberid
+            GROUP BY keyword
+            ORDER BY latest_search DESC
+            LIMIT :limit
+        ) as recent
+    """, nativeQuery = true)
     List<String> findRecentSearchesByMember(
             @Param("memberid") String memberid,
             @Param("limit") int limit

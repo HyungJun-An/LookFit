@@ -127,11 +127,18 @@ const VirtualFitting = () => {
 
         {currentStep === 'result' && (
           <div className="result-section">
+            <p className="text-eyebrow result-section__eyebrow">AI Virtual Fitting · Result</p>
+            <h2 className="result-section__headline">이 룩을 따라해보세요</h2>
+            <p className="result-section__subcopy">
+              당신의 오늘 무드에 딱 맞는 착장이 완성됐어요.
+            </p>
+
             <div className="result-comparison">
               <div className="result-image-container">
                 <h3>원본 사진</h3>
                 <img src={uploadedImage || ''} alt="Original" className="result-image" />
               </div>
+              <div className="result-comparison__arrow" aria-hidden="true">→</div>
               <div className="result-image-container">
                 <h3>AI 착장샷</h3>
                 <img src={resultImage || ''} alt="Fitted" className="result-image" />

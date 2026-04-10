@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // 토큰 만료 또는 인증 실패
+      // 토큰 만료 또는 인증 실패 (인증 문제)
       alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
 
       // localStorage 정리
@@ -42,6 +42,8 @@ axiosInstance.interceptors.response.use(
       // 로그인 페이지로 리다이렉트
       window.location.href = '/login';
     }
+    // 403 Forbidden (권한 문제)은 각 컴포넌트에서 처리
+    // ReviewForm, Cart 등에서 적절한 에러 메시지 표시
     return Promise.reject(error);
   }
 );

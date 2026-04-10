@@ -43,7 +43,7 @@
   --color-text-inverse: #ffffff;
 
   /* Typography - Font Family */
-  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Typography - Font Size */
@@ -115,4 +115,47 @@
   --duration-normal: 200ms;
   --duration-slow: 300ms;
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ─────────────────────────────────────── */
+  /* Extended — 감성 리디자인 Phase 1         */
+  /* ─────────────────────────────────────── */
+
+  /* Font Family — Display (headlines, hero) */
+  --font-display: 'Playfair Display', 'Pretendard Variable', 'Pretendard', Georgia, serif;
+
+  /* Colors — Accent (웜 베이지/차콜/크림) */
+  --color-accent-warm: #b08968;
+  --color-accent-warm-soft: #f4e9dc;
+  --color-accent-cool: #6b705c;
+  --color-accent-charcoal: #2d2a26;
+  --color-accent-cream: #faf7f2;
+
+  /* Colors — Mood Tags (감성 뱃지) */
+  --color-tag-date: #d97b7b;
+  --color-tag-date-soft: #fde8e8;
+  --color-tag-office: #5f7a94;
+  --color-tag-office-soft: #e1ebf2;
+  --color-tag-casual: #b8804b;
+  --color-tag-casual-soft: #f4e5d1;
+  --color-tag-weekend: #6b8e5e;
+  --color-tag-weekend-soft: #e3efe0;
+  --color-tag-mood: #8b5cf6;
+  --color-tag-mood-soft: #ede9fe;
+
+  /* Gradients (히어로·배너용) */
+  --gradient-hero-dark: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.78) 0%,
+    rgba(17, 24, 39, 0.45) 60%,
+    rgba(14, 165, 233, 0.28) 100%
+  );
+  --gradient-warm: linear-gradient(135deg, #faf7f2 0%, #f4e9dc 100%);
+  --gradient-sunset: linear-gradient(135deg, #fde8e8 0%, #f4e9dc 50%, #e1ebf2 100%);
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%);
+
+  /* Shadows — Elevated (감성 카드용, 기본 shadow-* 는 유지) */
+  --shadow-elevated: 0 20px 40px -12px rgba(17, 24, 39, 0.12),
+                     0 8px 16px -8px rgba(17, 24, 39, 0.08);
+  --shadow-hero: 0 30px 60px -20px rgba(17, 24, 39, 0.25);
+  --shadow-tag: 0 2px 8px rgba(17, 24, 39, 0.08);
 }

@@ -567,3 +567,93 @@
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
   }
 }
+
+/* ─────────────────────────────────────────── */
+/* Phase 3 — 매거진 타이포 위계 & 감성 디테일  */
+/* ─────────────────────────────────────────── */
+
+/* 브랜드: wide-track, 크림 배경 위 웜 차콜 */
+.product-detail__info .product-brand {
+  font-family: var(--font-display);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.18em;
+  color: var(--color-accent-warm);
+  position: relative;
+  padding-bottom: var(--space-2);
+}
+
+.product-detail__info .product-brand::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: var(--color-accent-warm);
+  margin-top: var(--space-2);
+  opacity: 0.6;
+}
+
+/* 상품명: display font, 약간의 음수 letter-spacing */
+.product-detail__info .product-name {
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-accent-charcoal);
+}
+
+/* 가격: 단단한 차콜 + numeric tabular */
+.product-detail__info .product-price {
+  font-family: var(--font-sans);
+  color: var(--color-accent-charcoal);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 설명: 네모 citation box 대신 매거진 pull-quote 느낌 */
+.product-detail__info .product-description {
+  position: relative;
+  background: var(--color-accent-cream);
+  border-left: none;
+  padding: var(--space-8) var(--space-8) var(--space-6) var(--space-12);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.product-detail__info .product-description::before {
+  content: '"';
+  position: absolute;
+  top: -8px;
+  left: var(--space-4);
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: var(--font-bold);
+  color: var(--color-accent-warm);
+  opacity: 0.35;
+  line-height: 1;
+}
+
+.product-detail__info .product-description p {
+  line-height: var(--leading-relaxed);
+  color: var(--color-accent-charcoal);
+  font-size: var(--text-base);
+}
+
+/* 감성 배지: 가격 옆 무드 태그 자리 (선택적으로 JSX에서 사용) */
+.product-detail__info .product-mood-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .product-detail__info .product-description {
+    padding: var(--space-6) var(--space-5) var(--space-5) var(--space-10);
+  }
+
+  .product-detail__info .product-description::before {
+    font-size: 3.5rem;
+    top: -4px;
+    left: var(--space-3);
+  }
+}

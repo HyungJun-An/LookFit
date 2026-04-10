@@ -2,6 +2,7 @@ package com.lookfit.global.security;
 
 import com.lookfit.member.domain.Member;
 import com.lookfit.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -19,6 +20,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @SneakyThrows
     @Override
@@ -51,7 +55,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtTokenProvider.createToken(memberId, "USER");
 
         // 프론트엔드로 리다이렉트 (토큰과 사용자 정보 전달)
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/login/success")
+        String targetUrl = UriComponentsBuilder.fromUriString(frontendUrl + "/login/success")
                 .queryParam("token", token)
                 .queryParam("memberId", memberId)
                 .queryParam("memberName", member.getMembername())

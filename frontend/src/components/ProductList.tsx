@@ -15,12 +15,43 @@ type ProductListResponse = {
 };
 
 const categories = ['전체', '아우터', '상의', '하의', '신발', '가방', '모자', '벨트', '치마'];
+
+// 카테고리별 이모지 힌트 (Phase 2 감성 리디자인)
+const categoryEmojis: Record<string, string> = {
+  '전체': '✨',
+  '아우터': '🧥',
+  '상의': '👕',
+  '하의': '👖',
+  '신발': '👟',
+  '가방': '👜',
+  '모자': '🧢',
+  '벨트': '🎗️',
+  '치마': '👗',
+};
+
 const sortOptions = [
   { label: '최신순', value: 'newest' },
   { label: '인기순', value: 'popularity' },
   { label: '낮은 가격순', value: 'price_asc' },
   { label: '높은 가격순', value: 'price_desc' },
 ];
+
+// 감성 무드 태그 — productId 해시로 결정론적 할당 (리렌더 플리커 방지)
+const MOOD_TAGS = [
+  { label: '#데이트룩', variant: 'date' },
+  { label: '#오피스', variant: 'office' },
+  { label: '#캐주얼', variant: 'casual' },
+  { label: '#주말나들이', variant: 'weekend' },
+  { label: '#오늘의무드', variant: 'mood' },
+] as const;
+
+const getMoodTag = (productId: string) => {
+  let hash = 0;
+  for (let i = 0; i < productId.length; i++) {
+    hash = (hash * 31 + productId.charCodeAt(i)) | 0;
+  }
+  return MOOD_TAGS[Math.abs(hash) % MOOD_TAGS.length];
+};
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -152,12 +183,51 @@ const ProductList = () => {
     return new Intl.NumberFormat('ko-KR').format(price) + '원';
   };
 
+  const handleScrollToProducts = () => {
+    const target = document.querySelector('.filter-bar');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="product-list-container">
+      {/* Hero Section — Phase 2 감성 매거진 랜딩 */}
+      <section className="hero-landing">
+        <div className="hero-landing__backdrop" aria-hidden="true" />
+        <div className="hero-landing__overlay" aria-hidden="true" />
+        <div className="hero-landing__content animate-fade-in-up">
+          <p className="text-eyebrow hero-landing__eyebrow">LookFit · AI Virtual Fitting</p>
+          <h1 className="text-display-lg hero-landing__headline">
+            오늘 어떤 룩을<br />입을까?
+          </h1>
+          <p className="hero-landing__subcopy">
+            AI가 당신의 무드에 맞는 옷을 추천해드려요.<br />
+            사진 한 장으로, 입어본 나를 미리 만나보세요.
+          </p>
+          <div className="hero-landing__cta-row">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg hero-landing__cta"
+              onClick={handleScrollToProducts}
+            >
+              둘러보기 ↓
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline btn-lg hero-landing__cta-ghost"
+              onClick={() => navigate('/fitting')}
+            >
+              AI 착장샷 체험
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Category Navigation */}
       <div className="category-nav">
         <div className="category-nav__inner">
-          <p className="category-nav__title">Categories</p>
+          <p className="text-eyebrow category-nav__title">Today's Picks</p>
           <div className="category-nav__list">
             {categories.map((category) => (
               <button
@@ -167,7 +237,10 @@ const ProductList = () => {
                 }`}
                 onClick={() => handleCategoryClick(category)}
               >
-                {category}
+                <span className="category-nav__emoji" aria-hidden="true">
+                  {categoryEmojis[category] ?? '✨'}
+                </span>
+                <span>{category}</span>
               </button>
             ))}
           </div>
@@ -230,8 +303,10 @@ const ProductList = () => {
           </p>
         </div>
       ) : (
-        <div className="product-grid">
-          {products.map((product) => (
+        <div className="product-grid animate-stagger">
+          {products.map((product) => {
+            const moodTag = getMoodTag(product.productId);
+            return (
             <div
               key={product.productId}
               className="product-card"
@@ -244,9 +319,15 @@ const ProductList = () => {
                   className="product-card__image"
                   loading="lazy"
                 />
+                <span className={`mood-tag mood-tag--${moodTag.variant} product-card__mood-tag`}>
+                  {moodTag.label}
+                </span>
                 {product.productStock && product.productStock < 10 && (
                   <span className="product-card__badge">품절임박</span>
                 )}
+                <div className="product-card__overlay" aria-hidden="true">
+                  <span className="product-card__overlay-text">상세 보기</span>
+                </div>
                 <div className="product-card__actions">
                   <button
                     className={`product-card__action-btn ${wishlistStatus[product.productId] ? 'active' : ''}`}
@@ -283,7 +364,8 @@ const ProductList = () => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

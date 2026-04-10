@@ -90,6 +90,12 @@ const ReviewList = ({ productId }: ReviewListProps) => {
     });
   };
 
+  // 작성자 memberId 첫 글자 이니셜 (마스킹된 경우 'u' 등 첫 글자 유지)
+  const getAuthorInitial = (memberId: string) => {
+    if (!memberId) return 'U';
+    return memberId.charAt(0).toUpperCase();
+  };
+
   return (
     <div className="review-section">
       {/* 리뷰 헤더 + 요약 */}
@@ -162,13 +168,18 @@ const ReviewList = ({ productId }: ReviewListProps) => {
           {reviews.map((review) => (
             <div key={review.reviewId} className="review-item">
               <div className="review-item__header">
+                <span className="review-item__avatar" aria-hidden="true">
+                  {getAuthorInitial(review.memberId)}
+                </span>
                 <div className="review-item__meta">
+                  <div className="review-item__meta-top">
+                    <span className="review-item__author">{review.memberId}</span>
+                    {review.updatedAt && (
+                      <span className="review-item__edited">(수정됨)</span>
+                    )}
+                  </div>
                   <StarRating rating={review.rating} size="sm" />
-                  <span className="review-item__author">{review.memberId}</span>
                   <span className="review-item__date">{formatDate(review.createdAt)}</span>
-                  {review.updatedAt && (
-                    <span className="review-item__edited">(수정됨)</span>
-                  )}
                 </div>
                 {review.isOwner && (
                   <div className="review-item__actions">

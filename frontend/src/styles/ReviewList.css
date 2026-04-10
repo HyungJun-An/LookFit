@@ -260,3 +260,179 @@
     max-height: 150px;
   }
 }
+
+/* ─────────────────────────────────────────── */
+/* Phase 3 — 리뷰 카드화 & 감성 디테일           */
+/* ─────────────────────────────────────────── */
+
+/* 섹션 제목을 매거진 헤드라인처럼 */
+.review-section__title-area h2 {
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-accent-charcoal);
+}
+
+/* 리뷰 리스트를 카드 그리드처럼 간격 확보 */
+.review-list {
+  gap: var(--space-5);
+}
+
+/* 각 리뷰를 카드로 승격 */
+.review-item {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-neutral-100);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-normal) var(--ease-in-out),
+              box-shadow var(--duration-normal) var(--ease-in-out),
+              border-color var(--duration-normal) var(--ease-in-out);
+  /* 리스트 border-bottom 덮어쓰기 */
+  border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.review-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+  border-color: var(--color-accent-warm-soft);
+}
+
+/* 카드화되었으므로 last-child border 제거 규칙은 무의미 */
+
+/* 헤더: 아바타 + 메타 정보 + 액션 */
+.review-item__header {
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+  gap: var(--space-3);
+}
+
+/* 작성자 아바타 (JSX에서 새로 추가) */
+.review-item__avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-accent-warm-soft) 0%, var(--color-primary-100) 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-accent-warm);
+  letter-spacing: 0;
+  border: 2px solid var(--color-bg-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 메타 영역: 아바타 옆에 세로로 쌓기 */
+.review-item__meta {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.review-item__meta-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.review-item__author {
+  font-size: var(--text-base);
+  color: var(--color-accent-charcoal);
+}
+
+.review-item__date {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* 리뷰 본문: 행간 + 색 온도 살짝 조정 */
+.review-item__content {
+  font-size: var(--text-base);
+  color: var(--color-neutral-700);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+}
+
+/* 리뷰 이미지: 정사각 썸네일 느낌 + 살짝 라운드 */
+.review-item__image img {
+  max-width: 180px;
+  max-height: 180px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-neutral-100);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 액션 버튼: 텍스트 링크 느낌으로 덜 눈에 띄게 */
+.review-item__actions {
+  gap: var(--space-1);
+}
+
+.review-item__edit-btn,
+.review-item__delete-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  border-radius: var(--radius-md);
+}
+
+.review-item__edit-btn:hover {
+  background: var(--color-accent-warm-soft);
+  color: var(--color-accent-warm);
+  border-color: transparent;
+}
+
+.review-item__delete-btn:hover {
+  background: #fef2f2;
+  color: var(--color-error);
+  border-color: transparent;
+}
+
+/* 요약(평균 별점): 큼직하게 */
+.review-summary__average {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-accent-charcoal);
+}
+
+/* 빈 상태를 매거진 느낌으로 */
+.review-section__empty {
+  background: var(--color-accent-cream);
+  border-radius: var(--radius-xl);
+  padding: var(--space-16) var(--space-6);
+}
+
+.review-section__empty p {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .review-item {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+  }
+
+  .review-item__header {
+    /* 모바일에서도 아바타는 가로 정렬 유지 */
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .review-item__avatar {
+    width: 40px;
+    height: 40px;
+    font-size: var(--text-base);
+  }
+}

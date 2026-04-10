@@ -42,3 +42,8 @@ fitting:
   image:
     upload-dir: src/main/resources/static/images/fitting/user
     result-dir: src/main/resources/static/images/fitting/result
+
+# Application Configuration
+app:
+#  frontend-url: ${FRONTEND_URL:http://localhost:5173}  # Vercel 배포 시 환경변수로 변경
+   frontend-url: ${FRONTEND_URL:https://look-fit.vercel.app}  # Vercel 배포 시 환경변수로 변경

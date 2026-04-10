@@ -543,3 +543,259 @@
     height: 100%;
   }
 }
+
+/* ─────────────────────────────────────── */
+/* Phase 2 — Hero Landing · Mood Tag · Overlay */
+/* ─────────────────────────────────────── */
+
+.hero-landing {
+  position: relative;
+  isolation: isolate;
+  min-height: min(560px, 72vh);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-16) var(--space-6);
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+}
+
+.hero-landing__backdrop {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center 30%;
+  transform: scale(1.02);
+  z-index: -2;
+}
+
+.hero-landing__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-hero-dark);
+  z-index: -1;
+}
+
+.hero-landing__content {
+  max-width: 680px;
+  color: var(--color-text-inverse);
+  margin: 0 auto 0 max(var(--space-12), 6vw);
+  padding: var(--space-6) 0;
+}
+
+.hero-landing__eyebrow {
+  color: var(--color-accent-warm-soft);
+  margin-bottom: var(--space-4);
+}
+
+.hero-landing__headline {
+  color: var(--color-text-inverse);
+  margin: 0 0 var(--space-5) 0;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+.hero-landing__subcopy {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0 0 var(--space-8) 0;
+  max-width: 480px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-landing__cta-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.hero-landing__cta {
+  background: var(--color-bg-primary);
+  color: var(--color-accent-charcoal);
+  border-color: var(--color-bg-primary);
+  box-shadow: var(--shadow-elevated);
+}
+
+.hero-landing__cta:hover {
+  background: var(--color-accent-warm-soft);
+  border-color: var(--color-accent-warm-soft);
+  color: var(--color-accent-charcoal);
+  transform: translateY(-2px);
+}
+
+.hero-landing__cta-ghost {
+  background: transparent;
+  color: var(--color-text-inverse);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hero-landing__cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-text-inverse);
+  color: var(--color-text-inverse);
+  transform: translateY(-2px);
+}
+
+/* Category Nav — 이모지 힌트 배치 */
+.category-nav__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.category-nav__emoji {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* Mood Tag on Product Card — 좌상단 고정 */
+.product-card__mood-tag {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 품절임박 뱃지가 있을 때는 mood-tag 를 오른쪽 상단으로 */
+.product-card__image-wrapper:has(.product-card__badge) .product-card__mood-tag {
+  left: auto;
+  right: var(--space-3);
+  top: var(--space-12);
+}
+
+/* Hover Overlay */
+.product-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0) 40%,
+    rgba(17, 24, 39, 0.55) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-in-out);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--space-6);
+  pointer-events: none;
+}
+
+.product-card:hover .product-card__overlay {
+  opacity: 1;
+}
+
+.product-card__overlay-text {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-inverse);
+  text-transform: uppercase;
+  transform: translateY(8px);
+  transition: transform var(--duration-normal) var(--ease-in-out);
+}
+
+.product-card:hover .product-card__overlay-text {
+  transform: translateY(0);
+}
+
+/* product-card elevated shadow for lift effect */
+.product-card {
+  transition: transform var(--duration-normal) var(--ease-in-out),
+              box-shadow var(--duration-normal) var(--ease-in-out);
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+}
+
+.product-card:hover .product-card__image-wrapper {
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Hero Responsive */
+@media (max-width: 1024px) {
+  .hero-landing {
+    min-height: min(480px, 68vh);
+    padding: var(--space-12) var(--space-5);
+  }
+
+  .hero-landing__content {
+    margin-left: var(--space-8);
+    max-width: 560px;
+  }
+
+  .hero-landing__subcopy {
+    font-size: var(--text-base);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-landing {
+    min-height: min(440px, 62vh);
+    padding: var(--space-10) var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .hero-landing__content {
+    margin: 0;
+    text-align: center;
+    padding: 0;
+  }
+
+  .hero-landing__subcopy {
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-landing__cta-row {
+    justify-content: center;
+  }
+
+  .hero-landing__eyebrow {
+    justify-content: center;
+  }
+
+  .product-card__mood-tag {
+    top: var(--space-2);
+    left: var(--space-2);
+    font-size: 10px;
+    padding: 2px var(--space-2);
+  }
+
+  .product-card__overlay-text {
+    font-size: var(--text-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-landing {
+    min-height: 380px;
+    padding: var(--space-8) var(--space-3);
+  }
+
+  .hero-landing__subcopy {
+    font-size: var(--text-sm);
+  }
+
+  .hero-landing__cta-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-landing__cta,
+  .hero-landing__cta-ghost {
+    width: 100%;
+  }
+
+  /* Mobile 에서는 overlay 숨김 (hover 불가) */
+  .product-card__overlay {
+    display: none;
+  }
+}

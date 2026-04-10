@@ -82,6 +82,15 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// Spring Boot Main Class 설정
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    mainClass.set("com.lookfit.LookFitApplication")
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    mainClass.set("com.lookfit.LookFitApplication")
+}
+
 // Querydsl QClass 생성 경로 설정
 val querydslDir = "src/main/generated"
 
