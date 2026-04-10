@@ -435,10 +435,77 @@ node e2e-mobile-quick-test.cjs
 
 ## 📖 문서
 
-- [CLAUDE.md](./CLAUDE.md) - 프로젝트 개요, 에이전트 협업 규칙, 진행상황
-- [NAMING_CONVENTION.md](./NAMING_CONVENTION.md) - 네이밍 규칙 (camelCase vs snake_case)
-- [MOBILE_RESPONSIVE_GUIDE.md](./MOBILE_RESPONSIVE_GUIDE.md) - 모바일 반응형 가이드
+- [CLAUDE.md](./CLAUDE.md) - 에이전트 가이드 (아키텍처, SOLID, 네이밍/컨벤션, 모바일 규칙, 트랜잭션·동시성)
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 트러블슈팅 가이드 (8가지 주요 이슈)
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - 배포 가이드 (EC2/GitHub Actions + Vercel/Cloudflare 대안)
+- [docs/PRD.md](./docs/PRD.md) - 제품 요구사항 정의서 (FR/NFR, KPI, Open Questions)
 - [docs/AI_FITTING_PLAN_HUGGINGFACE.md](./docs/AI_FITTING_PLAN_HUGGINGFACE.md) - AI 피팅 구현 계획
+
+---
+
+## 🚀 배포
+
+이 프로젝트는 **GitHub Actions**를 사용한 자동 배포 파이프라인을 구축했습니다.
+
+### 빠른 시작
+
+```bash
+# 1. 저장소 클론
+git clone https://github.com/anhyeongjun/LookFit.git
+cd LookFit
+
+# 2. 환경변수 설정
+cp .env.example .env
+# .env 파일을 열어 환경변수 설정
+
+# 3. Docker Compose로 실행 (로컬 개발)
+docker-compose up -d
+
+# 4. 프로덕션 배포 (AWS EC2)
+# DEPLOYMENT_GUIDE.md 참고
+```
+
+### 배포 아키텍처
+
+```
+GitHub (main branch)
+    ↓ [push trigger]
+GitHub Actions
+    ↓ [build & test]
+Docker Hub
+    ↓ [pull images]
+AWS EC2
+    ↓ [docker-compose up]
+🚀 Production Service
+```
+
+### 배포 환경
+
+| 환경 | URL | 설명 |
+|------|-----|------|
+| **로컬 개발** | http://localhost:5173 | Vite Dev Server |
+| **프로덕션** | http://YOUR_EC2_IP | Docker + Nginx |
+
+### CI/CD 파이프라인
+
+자동 배포가 다음 조건에서 트리거됩니다:
+- ✅ `main` 브랜치에 push
+- ✅ Pull Request 생성 시 (테스트만 실행)
+
+**배포 단계**:
+1. 🧪 **테스트 실행** - Backend (JUnit) + Frontend (Vitest)
+2. 🐳 **Docker 이미지 빌드** - Multi-stage build로 최적화
+3. 📦 **Docker Hub 푸시** - 버전 태그 + latest 태그
+4. 🚀 **EC2 배포** - SSH로 자동 배포
+5. ✅ **Health Check** - 서비스 정상 작동 확인
+
+### 배포 상태
+
+[![Deploy Status](https://img.shields.io/badge/deploy-automated-blue)]()
+[![Docker](https://img.shields.io/badge/docker-multi--stage-blue)]()
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-green)]()
+
+**상세 가이드**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
 
 ---
 
@@ -488,4 +555,4 @@ node e2e-mobile-quick-test.cjs
 
 ---
 
-**마지막 업데이트**: 2026-02-11
+**마지막 업데이트**: 2026-02-12
